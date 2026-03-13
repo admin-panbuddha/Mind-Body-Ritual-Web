@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Visual Inspector — MindBodyRitual</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace; background: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      background: #161b22; border-bottom: 1px solid #30363d;
+      padding: 8px 14px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; z-index: 10;
+    }
+    .toolbar-title { font-size: 13px; font-weight: 700; color: #58a6ff; letter-spacing: 0.5px; }
+    .toolbar-badge { background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 12px; font-size: 11px; color: #8b949e; }
+    .toolbar-sep { flex: 1; }
+    .toolbar-hint { font-size: 11px; color: #6e7681; }
+    .inspect-toggle {
+      background: #238636; border: 1px solid #2ea043; color: white;
+      padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
+    }
+    .inspect-toggle.off { background: #21262d; border-color: #30363d; color: #8b949e; }
+    .inspect-toggle:hover { filter: brightness(1.15); }
+
+    /* ── MAIN LAYOUT ── */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 280px; min-width: 200px; max-width: 420px;
+      background: #161b22; border-right: 1px solid #30363d;
+      display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;
+    }
+    .sidebar-header {
+      padding: 10px 14px; border-bottom: 1px solid #30363d;
+      font-size: 11px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: 7px 14px; background: #0d1117; border-bottom: 1px solid #21262d;
+      font-size: 11px; color: #6e7681; min-height: 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .breadcrumb .crumb { color: #58a6ff; }
+    .breadcrumb .sep { color: #30363d; margin: 0 3px; }
+
+    /* Element info */
+    .info-panel { padding: 12px 14px; border-bottom: 1px solid #21262d; flex-shrink: 0; }
+    .info-empty { color: #6e7681; font-size: 12px; text-align: center; padding: 20px 0; }
+    .info-tag { font-size: 18px; color: #79c0ff; font-weight: 700; margin-bottom: 10px; }
+    .info-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 12px; align-items: flex-start; }
+    .info-key { color: #8b949e; width: 52px; flex-shrink: 0; padding-top: 1px; }
+    .info-val { color: #c9d1d9; flex: 1; word-break: break-all; }
+    .info-val.green { color: #7ee787; }
+    .info-val.orange { color: #ffa657; }
+    .info-val.blue { color: #79c0ff; }
+    .pill {
+      display: inline-block; background: #21262d; border: 1px solid #30363d;
+      padding: 1px 6px; border-radius: 10px; font-size: 10px; margin: 2px 2px 0 0;
+    }
+
+    /* CSS properties */
+    .styles-panel { flex: 1; overflow-y: auto; padding: 12px 14px; }
+    .styles-header { font-size: 11px; color: #8b949e; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .style-row { display: flex; gap: 6px; margin-bottom: 4px; font-size: 11px; }
+    .style-prop { color: #ffa657; flex: 1; }
+    .style-val { color: #7ee787; flex: 1; word-break: break-all; }
+
+    /* Edit panel */
+    .edit-panel { padding: 12px 14px; border-top: 1px solid #21262d; flex-shrink: 0; }
+    .edit-label { font-size: 11px; color: #8b949e; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .edit-tabs { display: flex; gap: 6px; margin-bottom: 8px; }
+    .edit-tab { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 3px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+    .edit-tab.active { background: #1f6feb; border-color: #388bfd; color: white; }
+    textarea.edit-area {
+      width: 100%; height: 120px; background: #0d1117; border: 1px solid #30363d;
+      color: #c9d1d9; padding: 8px; font-family: 'Courier New', monospace; font-size: 11px;
+      border-radius: 6px; resize: vertical; line-height: 1.5;
+    }
+    textarea.edit-area:focus { outline: none; border-color: #388bfd; }
+    .edit-actions { display: flex; gap: 6px; margin-top: 6px; }
+    .btn-apply { flex: 1; background: #238636; border: 1px solid #2ea043; color: white; padding: 6px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .btn-apply:hover { background: #2ea043; }
+    .btn-copy { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+    .btn-copy:hover { color: #c9d1d9; border-color: #8b949e; }
+
+    /* ── RESIZE HANDLE ── */
+    .resize-handle { width: 4px; background: #21262d; cursor: col-resize; flex-shrink: 0; transition: background 0.15s; }
+    .resize-handle:hover, .resize-handle.dragging { background: #388bfd; }
+
+    /* ── PREVIEW FRAME ── */
+    .preview-wrap { flex: 1; position: relative; overflow: hidden; background: #fff; }
+    .preview-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+
+    /* ── STATUS BAR ── */
+    .statusbar {
+      background: #1f6feb; padding: 2px 14px; font-size: 11px; color: rgba(255,255,255,0.8);
+      display: flex; gap: 16px; flex-shrink: 0;
+    }
+    .statusbar span { color: white; }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="toolbar-title">⬡ Visual Inspector</div>
+  <div class="toolbar-badge">MindBodyRitual / index.html</div>
+  <div class="toolbar-sep"></div>
+  <div class="toolbar-hint" id="hintText">Hover over elements to inspect · Click to select &amp; edit</div>
+  <button class="inspect-toggle" id="inspectToggle">● Inspect ON</button>
+</div>
+
+<div class="main">
+  <!-- ── SIDEBAR ── -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">Element Inspector</div>
+
+    <div class="breadcrumb" id="breadcrumb">
+      <span style="color:#6e7681">← hover an element to begin</span>
+    </div>
+
+    <div class="info-panel" id="infoPanel">
+      <div class="info-empty">No element selected</div>
+    </div>
+
+    <div class="styles-panel" id="stylesPanel">
+      <div class="styles-header">Computed Styles</div>
+      <div style="color:#6e7681;font-size:11px">Hover an element to see styles</div>
+    </div>
+
+    <div class="edit-panel" id="editPanel" style="display:none">
+      <div class="edit-label">Edit Element</div>
+      <div class="edit-tabs">
+        <button class="edit-tab active" data-mode="inner">Inner HTML</button>
+        <button class="edit-tab" data-mode="text">Text</button>
+        <button class="edit-tab" data-mode="outer">Outer HTML</button>
+      </div>
+      <textarea class="edit-area" id="editArea" spellcheck="false"></textarea>
+      <div class="edit-actions">
+        <button class="btn-apply" id="applyBtn">Apply Changes</button>
+        <button class="btn-copy" id="copyBtn" title="Copy to clipboard">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESIZE HANDLE ── -->
+  <div class="resize-handle" id="resizeHandle"></div>
+
+  <!-- ── IFRAME PREVIEW ── -->
+  <div class="preview-wrap">
+    <iframe id="preview" src="./index.html" title="Page Preview"></iframe>
+  </div>
+</div>
+
+<div class="statusbar">
+  <div id="statusTag">tag: —</div>
+  <div id="statusSize">size: —</div>
+  <div id="statusPos">pos: —</div>
+  <div style="flex:1"></div>
+  <div id="statusMode">mode: hovering</div>
+</div>
+
+<script>
+(function () {
+  const iframe = document.getElementById('preview');
+  const breadcrumb = document.getElementById('breadcrumb');
+  const infoPanel = document.getElementById('infoPanel');
+  const stylesPanel = document.getElementById('stylesPanel');
+  const editPanel = document.getElementById('editPanel');
+  const editArea = document.getElementById('editArea');
+  const applyBtn = document.getElementById('applyBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const inspectToggle = document.getElementById('inspectToggle');
+  const statusTag = document.getElementById('statusTag');
+  const statusSize = document.getElementById('statusSize');
+  const statusPos = document.getElementById('statusPos');
+  const statusMode = document.getElementById('statusMode');
+  const sidebar = document.getElementById('sidebar');
+  const resizeHandle = document.getElementById('resizeHandle');
+
+  let inspectOn = true;
+  let editMode = 'inner';
+  let selectedUID = null;
+
+  // ── INJECT INSPECTOR SCRIPT INTO IFRAME ──────────────────────────────────
+  iframe.addEventListener('load', () => {
+    try {
+      const doc = iframe.contentDocument;
+      const win = iframe.contentWindow;
+
+      // Inject CSS
+      const style = doc.createElement('style');
+      style.id = '__vi_style__';
+      style.textContent = `
+        .__vi_hover__ {
+          outline: 2px solid #f78166 !important;
+          outline-offset: 1px !important;
+          cursor: crosshair !important;
+        }
+        .__vi_selected__ {
+          outline: 2px solid #388bfd !important;
+          outline-offset: 1px !important;
+          background-color: rgba(56,139,253,0.07) !important;
+        }
+      `;
+      doc.head.appendChild(style);
+
+      let hoveredEl = null;
+      let selectedEl = null;
+      let uid = 0;
+
+      function getPath(el) {
+        const parts = [];
+        let cur = el;
+        while (cur && cur !== doc.body && cur !== doc.documentElement) {
+          let part = cur.tagName.toLowerCase();
+          if (cur.id) {
+            part += '#' + cur.id;
+          } else {
+            const classes = Array.from(cur.classList).filter(c => !c.startsWith('__vi_'));
+            if (classes.length) part += '.' + classes[0];
+            // sibling index
+            const siblings = cur.parentElement ? Array.from(cur.parentElement.children).filter(s => s.tagName === cur.tagName) : [];
+            if (siblings.length > 1) {
+              part += ':nth(' + (siblings.indexOf(cur) + 1) + ')';
+            }
+          }
+          parts.unshift(part);
+          cur = cur.parentElement;
+        }
+        return parts.join(' › ');
+      }
+
+      function getComputedProps(el) {
+        const cs = win.getComputedStyle(el);
+        const props = [
+          'display','position','width','height','margin','padding',
+          'font-size','font-weight','color','background-color',
+          'border','border-radius','flex','grid-area','z-index','opacity'
+        ];
+        return props.map(p => ({ prop: p, val: cs.getPropertyValue(p) }))
+          .filter(r => r.val && r.val !== 'none' && r.val !== 'normal' && r.val !== 'auto' && r.val !== '0px');
+      }
+
+      function sendInfo(type, el) {
+        if (!el || el === doc.body || el === doc.documentElement) return;
+        const rect = el.getBoundingClientRect();
+        const uid_val = el.dataset.__vi_uid__;
+        const classes = Array.from(el.classList).filter(c => !c.startsWith('__vi_'));
+        win.parent.postMessage({
+          type,
+          tag: el.tagName.toLowerCase(),
+          id: el.id || '',
+          classes,
+          innerText: (el.innerText || '').slice(0, 200),
+          innerHTML: el.innerHTML,
+          outerHTML: el.outerHTML,
+          path: getPath(el),
+          uid: uid_val,
+          rect: { top: Math.round(rect.top), left: Math.round(rect.left), width: Math.round(rect.width), height: Math.round(rect.height) },
+          computedStyles: getComputedProps(el)
+        }, '*');
+      }
+
+      // Assign UIDs to all elements
+      doc.querySelectorAll('*').forEach(el => {
+        el.dataset.__vi_uid__ = ++uid;
+      });
+
+      doc.addEventListener('mouseover', (e) => {
+        if (!win.__vi_on__) return;
+        e.stopPropagation();
+        if (hoveredEl && hoveredEl !== selectedEl) hoveredEl.classList.remove('__vi_hover__');
+        hoveredEl = e.target;
+        if (hoveredEl !== selectedEl) hoveredEl.classList.add('__vi_hover__');
+        sendInfo('hover', hoveredEl);
+      }, true);
+
+      doc.addEventListener('mouseout', (e) => {
+        if (hoveredEl && hoveredEl !== selectedEl) {
+          hoveredEl.classList.remove('__vi_hover__');
+        }
+      }, true);
+
+      doc.addEventListener('click', (e) => {
+        if (!win.__vi_on__) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (selectedEl) selectedEl.classList.remove('__vi_selected__');
+        selectedEl = e.target;
+        selectedEl.classList.add('__vi_selected__');
+        sendInfo('select', selectedEl);
+      }, true);
+
+      // Listen for apply from parent
+      win.addEventListener('message', (e) => {
+        if (e.data && e.data.type === 'apply') {
+          const el = doc.querySelector(`[data-\\-\\-vi_uid\\-\\-="${e.data.uid}"]`);
+          if (el) {
+            if (e.data.mode === 'inner') el.innerHTML = e.data.html;
+            else if (e.data.mode === 'text') el.innerText = e.data.text;
+            else if (e.data.mode === 'outer') {
+              el.outerHTML = e.data.html;
+            }
+          }
+        }
+        if (e.data && e.data.type === 'toggle') {
+          win.__vi_on__ = e.data.on;
+          if (!e.data.on) {
+            doc.querySelectorAll('.__vi_hover__, .__vi_selected__').forEach(el => {
+              el.classList.remove('__vi_hover__', '__vi_selected__');
+            });
+          }
+        }
+      });
+
+      win.__vi_on__ = true;
+      console.log('[Visual Inspector] Injected successfully.');
+    } catch (err) {
+      console.warn('[Visual Inspector] Could not inject — may need to be served from a local server.', err);
+    }
+  });
+
+  // ── RECEIVE MESSAGES FROM IFRAME ─────────────────────────────────────────
+  window.addEventListener('message', (e) => {
+    const d = e.data;
+    if (!d || !d.type) return;
+    if (d.type !== 'hover' && d.type !== 'select') return;
+
+    // Breadcrumb
+    const parts = d.path.split(' › ');
+    breadcrumb.innerHTML = parts.map((p, i) =>
+      i === parts.length - 1
+        ? `<span class="crumb">${p}</span>`
+        : `${p}<span class="sep"> › </span>`
+    ).join('');
+
+    // Info panel
+    const classHtml = d.classes.length
+      ? d.classes.map(c => `<span class="pill">.${c}</span>`).join('')
+      : '<span style="color:#6e7681">none</span>';
+
+    infoPanel.innerHTML = `
+      <div class="info-tag">&lt;${d.tag}&gt;</div>
+      ${d.id ? `<div class="info-row"><span class="info-key">id</span><span class="info-val orange">#${d.id}</span></div>` : ''}
+      <div class="info-row"><span class="info-key">class</span><span class="info-val green">${classHtml}</span></div>
+      <div class="info-row"><span class="info-key">size</span><span class="info-val">${d.rect.width} × ${d.rect.height}px</span></div>
+      <div class="info-row"><span class="info-key">pos</span><span class="info-val">${d.rect.left}, ${d.rect.top}</span></div>
+      ${d.innerText ? `<div class="info-row"><span class="info-key">text</span><span class="info-val" style="color:#6e7681;font-style:italic">"${d.innerText.slice(0,80)}${d.innerText.length > 80 ? '…' : ''}"</span></div>` : ''}
+    `;
+
+    // Computed styles
+    if (d.computedStyles && d.computedStyles.length) {
+      stylesPanel.innerHTML = `<div class="styles-header">Computed Styles</div>` +
+        d.computedStyles.map(s =>
+          `<div class="style-row"><span class="style-prop">${s.prop}</span><span class="style-val">${s.val}</span></div>`
+        ).join('');
+    }
+
+    // Status bar
+    statusTag.textContent = `tag: <${d.tag}>`;
+    statusSize.textContent = `size: ${d.rect.width}×${d.rect.height}`;
+    statusPos.textContent = `pos: ${d.rect.left},${d.rect.top}`;
+
+    if (d.type === 'select') {
+      selectedUID = d.uid;
+      editPanel.style.display = 'block';
+      updateEditArea(d);
+      statusMode.textContent = 'mode: selected';
+    }
+  });
+
+  function updateEditArea(d) {
+    if (editMode === 'inner') editArea.value = prettify(d.innerHTML);
+    else if (editMode === 'text') editArea.value = d.innerText || '';
+    else if (editMode === 'outer') editArea.value = d.outerHTML;
+  }
+
+  function prettify(html) {
+    // Simple indent for readability
+    let depth = 0;
+    return html
+      .replace(/></g, '>\n<')
+      .split('\n')
+      .map(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('</')) depth = Math.max(0, depth - 1);
+        const out = '  '.repeat(depth) + trimmed;
+        if (trimmed.startsWith('<') && !trimmed.startsWith('</') && !trimmed.startsWith('<br') && !trimmed.endsWith('/>') && !trimmed.startsWith('<!')) depth++;
+        return out;
+      })
+      .filter(Boolean)
+      .join('\n');
+  }
+
+  // Edit tabs
+  document.querySelectorAll('.edit-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.edit-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      editMode = tab.dataset.mode;
+      // Re-populate from last select message (re-request from iframe)
+      // Just clear and show instruction
+      editArea.placeholder = `Switch detected — click the element again to reload in ${editMode} mode`;
+    });
+  });
+
+  // Apply button
+  applyBtn.addEventListener('click', () => {
+    if (!selectedUID) return;
+    const msg = { type: 'apply', uid: selectedUID, mode: editMode };
+    if (editMode === 'inner' || editMode === 'outer') msg.html = editArea.value;
+    else msg.text = editArea.value;
+    iframe.contentWindow.postMessage(msg, '*');
+    applyBtn.textContent = '✓ Applied!';
+    setTimeout(() => applyBtn.textContent = 'Apply Changes', 1500);
+  });
+
+  // Copy button
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(editArea.value).then(() => {
+      copyBtn.textContent = '✓';
+      setTimeout(() => copyBtn.textContent = 'Copy', 1200);
+    });
+  });
+
+  // Inspect toggle
+  inspectToggle.addEventListener('click', () => {
+    inspectOn = !inspectOn;
+    inspectToggle.textContent = inspectOn ? '● Inspect ON' : '○ Inspect OFF';
+    inspectToggle.classList.toggle('off', !inspectOn);
+    iframe.contentWindow.postMessage({ type: 'toggle', on: inspectOn }, '*');
+    statusMode.textContent = inspectOn ? 'mode: hovering' : 'mode: off';
+  });
+
+  // ── SIDEBAR RESIZE ───────────────────────────────────────────────────────
+  let isResizing = false;
+  resizeHandle.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    resizeHandle.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+    // Overlay iframe to capture mouse events
+    iframe.style.pointerEvents = 'none';
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const newWidth = Math.max(180, Math.min(520, e.clientX));
+    sidebar.style.width = newWidth + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    if (!isResizing) return;
+    isResizing = false;
+    resizeHandle.classList.remove('dragging');
+    document.body.style.userSelect = '';
+    iframe.style.pointerEvents = '';
+  });
+
+})();
+</script>
+</body>
+</html>
