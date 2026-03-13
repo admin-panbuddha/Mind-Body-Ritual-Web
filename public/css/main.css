@@ -343,6 +343,63 @@ button{font-family:var(--font-b);cursor:pointer}
 .section-alt{background:var(--white)}
 
 /* ═══════════════════════════════════════════════════════════
+   DYNAMIC ANIMATIONS — v4 Enhancements
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 3D Perspective for rotateX/Y transforms ───────────── */
+.hero-content,
+.navigator-cards,
+.testimonials-grid,
+.feature-row,
+.cta-content{perspective:1000px}
+
+/* ── Split text base styles ────────────────────────────── */
+.word,.char{display:inline-block;will-change:transform,opacity}
+.hero-title .word{transform-style:preserve-3d}
+.cta-content h2 .word{transform-style:preserve-3d}
+
+/* ── Parallax hero depth layering ──────────────────────── */
+.hero{overflow:hidden}
+.hero-bg{will-change:transform}
+.hero-visual{will-change:transform}
+.hero-text{will-change:transform,opacity}
+
+/* ── Feature section scrub-ready ───────────────────────── */
+.feature-text,.feature-visual{will-change:transform,opacity}
+.feature-text h3 .char{will-change:transform,opacity}
+.feature-badge{will-change:transform,opacity}
+
+/* ── Journey connector transform origin ────────────────── */
+.journey-connector{transform-origin:left center;will-change:transform}
+@media(max-width:768px){
+  .journey-connector{transform-origin:center top}
+}
+
+/* ── Navigator 3D tilt ─────────────────────────────────── */
+.navigator-card{transform-style:preserve-3d;will-change:transform}
+
+/* ── Blog cards cascade-ready ──────────────────────────── */
+.blog-card{will-change:transform,opacity}
+
+/* ── FAQ slide entrance ────────────────────────────────── */
+.faq-item{will-change:transform,opacity}
+
+/* ── Testimonial 3D tilt ───────────────────────────────── */
+.testimonial-card{transform-style:preserve-3d;will-change:transform,opacity}
+
+/* ── Footer reveal ─────────────────────────────────────── */
+.footer{will-change:opacity}
+
+/* ── Smooth GPU compositing hints ──────────────────────── */
+.hero-title,.section-title,.cta-content h2{transform:translateZ(0)}
+
+/* ── Video cinematic entrance ──────────────────────────── */
+.video-wrapper{will-change:transform,opacity}
+
+/* ── Stats pop entrance ────────────────────────────────── */
+.stat{will-change:transform,opacity}
+
+/* ═══════════════════════════════════════════════════════════
    TOAST
    ═══════════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.85rem 1.5rem;background:var(--text);color:#fff;border-radius:var(--radius);font-size:.9rem;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:all .4s var(--ease);z-index:9999}
