@@ -3,76 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MindBodyRitual — Holistic wellness products, guided rituals, and a community that grows with you. Shop curated mind, body & ritual essentials.">
-
-  <title>MindBodyRitual — Wellness Products & Guided Rituals</title>
-  <link rel="canonical" href="https://mindbodyritual.up.railway.app">
+  <meta name="description" content="MindBodyRitual — A 5-minute family reset. Move, Unpack, Breathe, Gratitude, Intention. A 25-minute morning routine for caregivers and kids ages 3+.">
+  <title>MindBodyRitual — A 5-Minute Family Reset</title>
+  <link rel="canonical" href="https://mindbodyritual.ca">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://mindbodyritual.up.railway.app">
-  <meta property="og:title" content="MindBodyRitual — Wellness Products & Guided Rituals">
-  <meta property="og:description" content="Curated wellness products, guided rituals, and a gamified journey to your best self.">
+  <meta property="og:url" content="https://mindbodyritual.ca">
+  <meta property="og:title" content="MindBodyRitual — A 5-Minute Family Reset">
+  <meta property="og:description" content="Move, Unpack, Breathe, Gratitude, Intention. A 25-minute morning routine for caregivers and kids ages 3+.">
   <meta property="og:image" content="/images/og-preview.png">
   <meta property="og:site_name" content="MindBodyRitual">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MindBodyRitual — Wellness Products & Guided Rituals">
-  <meta name="twitter:description" content="Curated wellness products, guided rituals, and a gamified journey to your best self.">
+  <meta name="twitter:title" content="MindBodyRitual — A 5-Minute Family Reset">
+  <meta name="twitter:description" content="Move, Unpack, Breathe, Gratitude, Intention. A 25-minute morning routine for caregivers and kids ages 3+.">
   <meta name="twitter:image" content="/images/og-preview.png">
 
-  <meta name="theme-color" content="#3D6B4F">
+  <meta name="theme-color" content="#2C4A37">
 
-  <!-- Fonts (Crimson Pro + Inter to match mindbodyritual.ca) -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="./css/main.css">
   <link rel="stylesheet" href="./css/components.css">
-
-  <!-- GA placeholder -->
-  <!--
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date()); gtag('config', 'G-XXXXXXXXXX');
-  </script>
-  -->
 </head>
 <body>
 
-  <div data-barba="wrapper">
-  <main data-barba="container" data-barba-namespace="home">
-
-  <!-- ═══ 1. PROMO BANNER ═══ -->
+  <!-- ═══ PROMO BANNER ═══ -->
   <div class="promo-banner" id="promoBanner">
     <div class="container promo-inner">
-      <p>Free shipping on orders over $75 — Use code <strong>RITUAL25</strong> for 25% off your first order</p>
+      <p>Free download on the App Store &amp; Google Play — Use code <strong>RITUAL25</strong> for 25% off your first order</p>
       <button class="promo-close" id="promoClose" aria-label="Close">&times;</button>
     </div>
   </div>
 
-  <!-- ═══ 2. STICKY NAVIGATION ═══ -->
+  <!-- ═══ NAVBAR ═══ -->
   <nav class="navbar" id="navbar">
     <div class="container nav-inner">
       <a href="/" class="nav-brand">MindBodyRitual</a>
 
       <div class="nav-tabs" id="navTabs">
-        <a href="#shop" class="nav-tab" data-pillar="mind">Mind</a>
-        <a href="#shop" class="nav-tab" data-pillar="body">Body</a>
-        <a href="#shop" class="nav-tab" data-pillar="ritual">Ritual</a>
+        <a href="#rituals" class="nav-tab">The Rituals</a>
+        <a href="#download" class="nav-tab">Download App</a>
+        <a href="#faq" class="nav-tab">FAQ</a>
       </div>
 
       <div class="nav-actions">
-        <button class="nav-cart" id="cartBtn" aria-label="Cart">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          <span class="cart-count" id="cartCount">0</span>
-        </button>
-        <a href="#cta" class="btn btn-primary btn-sm nav-cta">Begin Your Ritual</a>
+        <a href="#download" class="btn btn-primary btn-sm nav-cta">Begin Your Ritual</a>
         <button class="nav-toggle" id="navToggle" aria-label="Menu">
           <span></span><span></span><span></span>
         </button>
@@ -81,134 +63,242 @@
 
     <!-- Mobile menu -->
     <div class="mobile-menu" id="mobileMenu">
-      <a href="#features">Features</a>
-      <a href="#shop">Shop</a>
-      <a href="#blog">Blog</a>
-      <a href="#contact">Contact</a>
-      <a href="/login" class="btn btn-secondary btn-sm">Sign In</a>
+      <a href="#rituals">The Rituals</a>
+      <a href="#pack">What You Get</a>
+      <a href="#video">Watch</a>
+      <a href="#download">Download App</a>
+      <a href="#faq">FAQ</a>
     </div>
   </nav>
 
-  <!-- ═══ 3. HERO SECTION ═══ -->
+  <!-- ═══ HERO ═══ -->
   <section class="hero" id="hero">
     <div class="hero-bg"></div>
     <div class="container hero-content">
+
       <div class="hero-text">
-        <h1 class="hero-title">Nourish Your Mind.<br>Strengthen Your Body.<br>Honor Your Ritual.</h1>
-        <p class="hero-subtitle">Curated wellness products and guided rituals designed to help you build a daily practice that actually sticks.</p>
-        <ul class="hero-features">
-          <li>Mindful morning &amp; evening ritual kits</li>
-          <li>Gamified streaks, stones &amp; real rewards</li>
-          <li>Ethically sourced, 100% natural products</li>
-          <li>Guided practices for mind, body &amp; spirit</li>
-        </ul>
-        <div class="hero-actions">
-          <a href="#navigator" class="btn btn-primary btn-lg">Begin Your Ritual</a>
-          <a href="#features" class="btn btn-secondary btn-lg">Learn More</a>
+        <p class="hero-eyebrow">Panbuddha Presents</p>
+        <h1 class="hero-title">A 5-Minute<br>Family Reset.</h1>
+        <div class="hero-ritual-strip">
+          <span class="ritual-tag" data-ritual="move">Move</span>
+          <span class="ritual-sep">&middot;</span>
+          <span class="ritual-tag" data-ritual="unpack">Unpack</span>
+          <span class="ritual-sep">&middot;</span>
+          <span class="ritual-tag" data-ritual="breathe">Breathe</span>
+          <span class="ritual-sep">&middot;</span>
+          <span class="ritual-tag" data-ritual="gratitude">Gratitude</span>
+          <span class="ritual-sep">&middot;</span>
+          <span class="ritual-tag" data-ritual="intention">Intention</span>
+        </div>
+        <p class="hero-subtitle">A 25-minute morning routine — 5 rituals &times; 5 minutes — designed for caregivers and children ages&nbsp;3+.</p>
+        <div class="hero-app-badges">
+          <a href="#download" class="app-badge-link">
+            <img src="https://mindbodyritual.ca/wp-content/uploads/2026/02/Store-Aplle.png"
+                 alt="Download on the App Store"
+                 class="app-badge-img"
+                 onerror="this.closest('.app-badge-link').innerHTML='<span class=\'app-badge-fallback\'>App Store</span>'">
+          </a>
+          <a href="#download" class="app-badge-link">
+            <img src="https://mindbodyritual.ca/wp-content/uploads/2026/02/Store-Android.png"
+                 alt="Get it on Google Play"
+                 class="app-badge-img"
+                 onerror="this.closest('.app-badge-link').innerHTML='<span class=\'app-badge-fallback\'>Google Play</span>'">
+          </a>
         </div>
       </div>
+
       <div class="hero-visual">
-        <img src="/images/hero-ritual.png" alt="MindBodyRitual wellness products" onerror="this.style.display='none'">
+        <div class="hero-phone-wrap">
+          <img src="https://mindbodyritual.ca/wp-content/uploads/2026/02/Landing-Page-cellphone-01-1.png"
+               alt="MindBodyRitual App on iPhone"
+               class="hero-phone"
+               onerror="this.closest('.hero-phone-wrap').classList.add('no-img')">
+        </div>
       </div>
+
     </div>
+
+    <a href="#mission" class="hero-scroll-cue" aria-label="Scroll down">
+      <span>Explore the ritual</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </a>
   </section>
 
-  <!-- ═══ 4. SOCIAL PROOF TICKER ═══ -->
+  <!-- ═══ PROOF TICKER ═══ -->
   <div class="proof-ticker">
     <div class="ticker-track">
       <span class="ticker-item">&#9733; 4.9 / 5 Average Rating</span>
-      <span class="ticker-divider">·</span>
+      <span class="ticker-divider">&middot;</span>
       <span class="ticker-item">Trusted by 2,500+ Ritual Practitioners</span>
-      <span class="ticker-divider">·</span>
-      <span class="ticker-item">100% Natural Ingredients</span>
-      <span class="ticker-divider">·</span>
-      <span class="ticker-item">Ethically Sourced</span>
-      <span class="ticker-divider">·</span>
+      <span class="ticker-divider">&middot;</span>
+      <span class="ticker-item">For Caregivers &amp; Kids Ages 3+</span>
+      <span class="ticker-divider">&middot;</span>
+      <span class="ticker-item">5 Rituals &middot; 5 Minutes Each</span>
+      <span class="ticker-divider">&middot;</span>
+      <span class="ticker-item">Free on iOS &amp; Android</span>
+      <span class="ticker-divider">&middot;</span>
       <span class="ticker-item">&#9733; 4.9 / 5 Average Rating</span>
-      <span class="ticker-divider">·</span>
+      <span class="ticker-divider">&middot;</span>
       <span class="ticker-item">Trusted by 2,500+ Ritual Practitioners</span>
-      <span class="ticker-divider">·</span>
-      <span class="ticker-item">100% Natural Ingredients</span>
-      <span class="ticker-divider">·</span>
-      <span class="ticker-item">Ethically Sourced</span>
+      <span class="ticker-divider">&middot;</span>
+      <span class="ticker-item">For Caregivers &amp; Kids Ages 3+</span>
+      <span class="ticker-divider">&middot;</span>
+      <span class="ticker-item">5 Rituals &middot; 5 Minutes Each</span>
+      <span class="ticker-divider">&middot;</span>
+      <span class="ticker-item">Free on iOS &amp; Android</span>
     </div>
   </div>
 
-  <!-- ═══ 5. NEEDS NAVIGATOR ═══ -->
-  <section class="section navigator" id="navigator">
-    <div class="container">
-      <h2 class="section-title">What Are You Seeking?</h2>
-      <p class="section-subtitle">Choose your path — we'll guide you to the right products and practices.</p>
-      <div class="navigator-cards">
-        <a href="#shop" class="navigator-card" data-pillar="mind">
-          <div class="navigator-icon">🧠</div>
-          <h3>Mind</h3>
-          <p>Clarity, focus, meditation tools, journaling, mental wellness supplements</p>
-          <span class="navigator-arrow">Explore →</span>
-        </a>
-        <a href="#shop" class="navigator-card" data-pillar="body">
-          <div class="navigator-icon">🌿</div>
-          <h3>Body</h3>
-          <p>Movement, yoga essentials, natural skincare, herbal remedies, nutrition</p>
-          <span class="navigator-arrow">Explore →</span>
-        </a>
-        <a href="#shop" class="navigator-card" data-pillar="ritual">
-          <div class="navigator-icon">🕯️</div>
-          <h3>Ritual</h3>
-          <p>Candles, crystals, incense, ceremony kits, seasonal celebration tools</p>
-          <span class="navigator-arrow">Explore →</span>
-        </a>
+  <!-- ═══ MISSION ═══ -->
+  <section class="section mission-section" id="mission">
+    <div class="container mission-inner">
+      <div class="mission-text">
+        <p class="section-eyebrow">About the Practice</p>
+        <h2 class="section-title" style="text-align:left">A calm start for the whole family.</h2>
+        <p class="mission-lead">Panbuddha is a calm, trusted family brand offering product lines that support wellbeing, learning, and joyful everyday experiences.</p>
+        <p class="mission-body">MindBodyRitual is a 25-minute morning routine made up of five 5-minute rituals — designed for caregivers and children ages 3 and up. The goal is to build a practice that actually holds together, even on the hardest mornings.</p>
+        <blockquote class="mission-quote">
+          &ldquo;Keep the exercise gentle and repeatable. The goal is &lsquo;better than before,&rsquo; not perfect.&rdquo;
+        </blockquote>
+        <p class="mission-note">When life is messy: do the first 2 minutes of any step and move on.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ═══ 6. FEATURE SHOWCASE ═══ -->
-  <section class="section features" id="features">
-    <div class="container">
-      <h2 class="section-title">Why MindBodyRitual?</h2>
-
-      <div class="feature-row">
-        <div class="feature-text">
-          <span class="feature-badge">Curated</span>
-          <h3>Products That Actually Work</h3>
-          <p>Every product is hand-selected by wellness practitioners. No filler, no gimmicks — just tools and ingredients backed by tradition and modern science.</p>
-        </div>
-        <div class="feature-visual">
-          <div class="feature-placeholder">Product showcase image</div>
-        </div>
-      </div>
-
-      <div class="feature-row reverse">
-        <div class="feature-text">
-          <span class="feature-badge">Guided</span>
-          <h3>Rituals That Build Habits</h3>
-          <p>Follow guided morning and evening rituals that combine your products into a daily practice. Our streak system keeps you motivated with real rewards.</p>
-        </div>
-        <div class="feature-visual">
-          <div class="feature-placeholder">Ritual flow mockup</div>
-        </div>
-      </div>
-
-      <div class="feature-row">
-        <div class="feature-text">
-          <span class="feature-badge">Rewarding</span>
-          <h3>Earn As You Grow</h3>
-          <p>Collect ritual stones, unlock seasonal badges, and earn real discounts as you deepen your practice. Your wellness journey becomes a game you want to play.</p>
-        </div>
-        <div class="feature-visual">
-          <div class="feature-placeholder">Gamification preview</div>
+      <div class="mission-visual">
+        <div class="mission-stats-stack">
+          <div class="mission-stat">
+            <strong>25</strong>
+            <span>minutes total</span>
+          </div>
+          <div class="mission-stat">
+            <strong>5</strong>
+            <span>daily rituals</span>
+          </div>
+          <div class="mission-stat">
+            <strong>3+</strong>
+            <span>ages</span>
+          </div>
+          <div class="mission-stat">
+            <strong>&infin;</strong>
+            <span>better mornings</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ VIDEO SHOWCASE ═══ -->
+  <!-- ═══ THE FIVE RITUALS ═══ -->
+  <section class="section rituals-section" id="rituals">
+    <div class="container">
+      <p class="section-eyebrow">Five Steps</p>
+      <h2 class="section-title">The Morning Ritual</h2>
+      <p class="section-subtitle">Each step takes five minutes. Each one is designed to be gentle, repeatable, and achievable — even on the most chaotic mornings.</p>
+    </div>
+
+    <div class="rituals-grid">
+
+      <div class="ritual-card" data-ritual="move">
+        <div class="ritual-card-inner">
+          <div class="ritual-number">01</div>
+          <div class="ritual-emoji">&#127939;</div>
+          <span class="ritual-badge ritual-badge--move">Move</span>
+          <h3 class="ritual-name">Wake Up Your Body</h3>
+          <p class="ritual-desc">Gently shift your nervous system from sleepy and tense to energized and steady. Stretches, twists, marching, a balance game, a shake-out — gentle and repeatable.</p>
+          <span class="ritual-duration">5 minutes</span>
+        </div>
+      </div>
+
+      <div class="ritual-card" data-ritual="unpack">
+        <div class="ritual-card-inner">
+          <div class="ritual-number">02</div>
+          <div class="ritual-emoji">&#128218;</div>
+          <span class="ritual-badge ritual-badge--unpack">Unpack</span>
+          <h3 class="ritual-name">Name What You're Carrying</h3>
+          <p class="ritual-desc">Name the emotions you're carrying so they stop running unconsciously in the background. Write or say one sentence, rate the intensity 0&ndash;10, add a kind response.</p>
+          <span class="ritual-duration">5 minutes</span>
+        </div>
+      </div>
+
+      <div class="ritual-card" data-ritual="breathe">
+        <div class="ritual-card-inner">
+          <div class="ritual-number">03</div>
+          <div class="ritual-emoji">&#127777;</div>
+          <span class="ritual-badge ritual-badge--breathe">Breathe</span>
+          <h3 class="ritual-name">Find Your Calm</h3>
+          <p class="ritual-desc">Guided breathing for calm, focus, and flexibility. Sit comfortably — inhale 6 counts, exhale 4 counts, 8&ndash;12 rounds. Sun breaths for the little ones.</p>
+          <span class="ritual-duration">5 minutes</span>
+        </div>
+      </div>
+
+      <div class="ritual-card" data-ritual="gratitude">
+        <div class="ritual-card-inner">
+          <div class="ritual-number">04</div>
+          <div class="ritual-emoji">&#10024;</div>
+          <span class="ritual-badge ritual-badge--gratitude">Gratitude</span>
+          <h3 class="ritual-name">Connect Through Appreciation</h3>
+          <p class="ritual-desc">Build connection through appreciation and belonging. Gratitude reframes your perspective and deepens the bonds you already have — as a family, as a person.</p>
+          <span class="ritual-duration">5 minutes</span>
+        </div>
+      </div>
+
+      <div class="ritual-card" data-ritual="intention">
+        <div class="ritual-card-inner">
+          <div class="ritual-number">05</div>
+          <div class="ritual-emoji">&#127919;</div>
+          <span class="ritual-badge ritual-badge--intention">Intention</span>
+          <h3 class="ritual-name">Set Your Direction</h3>
+          <p class="ritual-desc">Set behavioral goals with if-then planning. Decide how you want to show up today — for yourself, your children, your work. Small decisions, big results.</p>
+          <span class="ritual-duration">5 minutes</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ WHAT YOU GET ═══ -->
+  <section class="section pack-section" id="pack">
+    <div class="container">
+      <p class="section-eyebrow">The Pack</p>
+      <h2 class="section-title">What You'll Get</h2>
+      <p class="section-subtitle">Everything you need to start — and stick with — your morning ritual. Available as a free app or downloadable e-book.</p>
+      <div class="pack-grid">
+        <div class="pack-item">
+          <div class="pack-icon">&#128203;</div>
+          <h3>Quickstart Guide</h3>
+          <p>A printable you can stick on the fridge. Start tomorrow morning.</p>
+        </div>
+        <div class="pack-item">
+          <div class="pack-icon">&#128366;</div>
+          <h3>Step-by-Step Instructions</h3>
+          <p>Detailed guidance for each 5-minute ritual so you always know what comes next.</p>
+        </div>
+        <div class="pack-item">
+          <div class="pack-icon">&#128161;</div>
+          <h3>Real-Life Best Practices</h3>
+          <p>What actually helps this stick in real life — not just theory, but field-tested wisdom.</p>
+        </div>
+        <div class="pack-item">
+          <div class="pack-icon">&#128300;</div>
+          <h3>The Science, Simply</h3>
+          <p>Why these steps work, explained in plain and accessible language. No jargon.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ VIDEO ═══ -->
   <section class="section video-section" id="video">
     <div class="container">
-      <h2 class="section-title">See the Ritual in Action</h2>
-      <p class="section-subtitle">Watch how MindBodyRitual transforms your daily practice into a rewarding journey.</p>
+      <p class="section-eyebrow">See It In Action</p>
+      <h2 class="section-title">The Ritual, Brought to Life</h2>
+      <p class="section-subtitle">Watch how MindBodyRitual fits into a real morning — for real families.</p>
       <div class="video-wrapper">
-        <video id="heroVideo" src="https://mindbodyritual.ca/wp-content/uploads/2026/03/Website-App-Ad-01.mp4" preload="metadata" playsinline loop muted></video>
+        <video id="heroVideo"
+               src="https://mindbodyritual.ca/wp-content/uploads/2026/03/Website-App-Ad-01.mp4"
+               preload="metadata"
+               playsinline
+               loop
+               muted></video>
         <div class="video-play-overlay" id="videoOverlay">
           <div class="video-play-btn">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg>
@@ -218,29 +308,11 @@
     </div>
   </section>
 
-  <!-- ═══ 7. TESTIMONIALS ═══ -->
-  <section class="section section-alt testimonials" id="testimonials">
+  <!-- ═══ SOCIAL PROOF ═══ -->
+  <section class="section section-alt proof-section" id="proof">
     <div class="container">
-      <h2 class="section-title">What Our Community Says</h2>
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p>"The morning ritual kit completely transformed my routine. I've kept a 45-day streak and I've never felt more grounded."</p>
-          <div class="testimonial-author">— Sarah M., Vancouver</div>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p>"I love that the gamification isn't gimmicky — earning actual discounts through my practice makes me look forward to it every day."</p>
-          <div class="testimonial-author">— Marcus T., Toronto</div>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p>"The crystal ritual stones are beautiful. My kids love checking my 'shelf' to see what new ones I've unlocked."</p>
-          <div class="testimonial-author">— Priya K., Montreal</div>
-        </div>
-      </div>
 
-      <div class="stats-row">
+      <div class="stats-display">
         <div class="stat">
           <div class="stat-number" data-target="2500">0</div>
           <div class="stat-label">Active Members</div>
@@ -258,203 +330,111 @@
           <div class="stat-label">% Would Recommend</div>
         </div>
       </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p>&ldquo;The morning ritual completely transformed our routine. I&rsquo;ve kept a 45-day streak and our kids actually look forward to it every single morning.&rdquo;</p>
+          <div class="testimonial-author">&mdash; Sarah M., Vancouver</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p>&ldquo;The breathing and intention steps have made such a difference for my 4-year-old. She reminds <em>me</em> to do it on the days I forget.&rdquo;</p>
+          <div class="testimonial-author">&mdash; Marcus T., Toronto</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p>&ldquo;I love that it&rsquo;s gentle and flexible. Even on chaotic mornings we do 2 minutes of each step and it still sets a completely better tone for the day.&rdquo;</p>
+          <div class="testimonial-author">&mdash; Priya K., Montreal</div>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- ═══ 8. BLOG PREVIEW ═══ -->
-  <section class="section blog-preview" id="blog">
-    <div class="container">
-      <h2 class="section-title">From the Journal</h2>
-      <p class="section-subtitle">Explore wellness wisdom, ritual guides, and product stories.</p>
-      <div class="blog-grid">
-        <article class="blog-card">
-          <div class="blog-card-img" style="background-color: var(--sage)">
-            <span class="blog-tag">Mind</span>
-          </div>
-          <div class="blog-card-body">
-            <h3>5 Morning Rituals That Changed My Life</h3>
-            <p>Simple practices you can start tomorrow to bring more clarity and calm to your mornings.</p>
-            <span class="blog-meta">5 min read</span>
-          </div>
-        </article>
-        <article class="blog-card">
-          <div class="blog-card-img" style="background-color: var(--terracotta)">
-            <span class="blog-tag">Body</span>
-          </div>
-          <div class="blog-card-body">
-            <h3>The Science Behind Grounding Practices</h3>
-            <p>Why walking barefoot and earthing techniques are backed by real research.</p>
-            <span class="blog-meta">7 min read</span>
-          </div>
-        </article>
-        <article class="blog-card">
-          <div class="blog-card-img" style="background-color: var(--gold)">
-            <span class="blog-tag">Ritual</span>
-          </div>
-          <div class="blog-card-body">
-            <h3>New Moon Ceremony: A Beginner's Guide</h3>
-            <p>Create your own new moon ritual with candles, crystals, and intention setting.</p>
-            <span class="blog-meta">6 min read</span>
-          </div>
-        </article>
-        <article class="blog-card">
-          <div class="blog-card-img" style="background-color: var(--forest)">
-            <span class="blog-tag">Wellness</span>
-          </div>
-          <div class="blog-card-body">
-            <h3>Building a Streak: The Psychology of Consistency</h3>
-            <p>How our gamification system uses behavioral science to help you stick with it.</p>
-            <span class="blog-meta">4 min read</span>
-          </div>
-        </article>
+  <!-- ═══ DOWNLOAD CTA ═══ -->
+  <section class="section download-section" id="download">
+    <div class="container download-inner">
+
+      <div class="download-text">
+        <p class="section-eyebrow">Get Started</p>
+        <h2 class="section-title download-title">Start Your Morning Ritual Today</h2>
+        <p class="download-subtitle">Download the free app or grab the free e-book. No credit card. No commitment. Just better mornings — starting tomorrow.</p>
+        <div class="download-badges">
+          <a href="#" class="app-badge-link">
+            <img src="https://mindbodyritual.ca/wp-content/uploads/2026/02/Store-Aplle.png"
+                 alt="Download on the App Store"
+                 class="app-badge-img"
+                 onerror="this.closest('.app-badge-link').innerHTML='<span class=\'app-badge-fallback light\'>&#8595; App Store</span>'">
+          </a>
+          <a href="#" class="app-badge-link">
+            <img src="https://mindbodyritual.ca/wp-content/uploads/2026/02/Store-Android.png"
+                 alt="Get it on Google Play"
+                 class="app-badge-img"
+                 onerror="this.closest('.app-badge-link').innerHTML='<span class=\'app-badge-fallback light\'>&#8595; Google Play</span>'">
+          </a>
+        </div>
+        <div class="download-divider">
+          <span>or get the free e-book</span>
+        </div>
+        <form class="cta-form" id="ctaForm">
+          <input type="email" placeholder="Your email address" required>
+          <button type="submit" class="btn btn-primary">Send Me the e-Book</button>
+        </form>
+        <p class="cta-note">No spam. Unsubscribe anytime. Welcome gift included.</p>
       </div>
-      <div class="section-cta">
-        <a href="/blog" class="btn btn-secondary">Read More Articles →</a>
+
+      <div class="download-visual">
+        <img src="https://mindbodyritual.ca/wp-content/uploads/2026/02/Landing-Page-cellphone-01-1.png"
+             alt="MindBodyRitual App"
+             class="download-phone"
+             onerror="this.style.display='none'">
       </div>
+
     </div>
   </section>
 
-  <!-- ═══ 9. FEATURED PRODUCTS ═══ -->
-  <section class="section shop" id="shop">
-    <div class="container">
-      <h2 class="section-title">Featured Products</h2>
-      <div class="shop-filters">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="mind">Mind</button>
-        <button class="filter-btn" data-filter="body">Body</button>
-        <button class="filter-btn" data-filter="ritual">Ritual</button>
-      </div>
-      <div class="products-grid" id="productsGrid">
-        <!-- Products loaded dynamically or placeholder cards -->
-        <div class="product-card" data-pillar="mind">
-          <div class="product-img" style="background-color: var(--sage-light)">
-            <span class="product-badge">Mind</span>
-          </div>
-          <div class="product-body">
-            <h3>Clarity Journal</h3>
-            <p class="product-price">$34.00</p>
-            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-          </div>
-        </div>
-        <div class="product-card" data-pillar="body">
-          <div class="product-img" style="background-color: var(--terracotta-light)">
-            <span class="product-badge">Body</span>
-          </div>
-          <div class="product-body">
-            <h3>Organic Yoga Mat</h3>
-            <p class="product-price">$68.00</p>
-            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-          </div>
-        </div>
-        <div class="product-card" data-pillar="ritual">
-          <div class="product-img" style="background-color: var(--gold-light)">
-            <span class="product-badge">Ritual</span>
-          </div>
-          <div class="product-body">
-            <h3>Sacred Candle Set</h3>
-            <p class="product-price">$42.00</p>
-            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-          </div>
-        </div>
-        <div class="product-card" data-pillar="mind">
-          <div class="product-img" style="background-color: var(--forest-light)">
-            <span class="product-badge">Mind</span>
-          </div>
-          <div class="product-body">
-            <h3>Meditation Crystal Set</h3>
-            <p class="product-price">$56.00</p>
-            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-          </div>
-        </div>
-      </div>
-      <div class="section-cta">
-        <a href="/shop" class="btn btn-secondary">View All Products →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ 10. GAMIFICATION TEASER ═══ -->
-  <section class="section section-alt gamification-teaser" id="gamification">
-    <div class="container">
-      <h2 class="section-title">Start Your Journey</h2>
-      <p class="section-subtitle">Your wellness practice earns real rewards. Build streaks, collect ritual stones, and unlock exclusive discounts.</p>
-      <div class="journey-preview">
-        <div class="journey-step">
-          <div class="journey-icon">🌿</div>
-          <h4>Sacred Streak</h4>
-          <p>Log daily rituals and watch your garden grow. Hit milestones at 7, 21, and 90 days.</p>
-        </div>
-        <div class="journey-connector"></div>
-        <div class="journey-step">
-          <div class="journey-icon">💎</div>
-          <h4>Ritual Stones</h4>
-          <p>Collect Mind, Body, and Ritual stones. Display them on your profile shelf.</p>
-        </div>
-        <div class="journey-connector"></div>
-        <div class="journey-step">
-          <div class="journey-icon">🗺️</div>
-          <h4>The Journey Map</h4>
-          <p>Progress along a nature trail. Each milestone unlocks discounts and exclusive products.</p>
-        </div>
-      </div>
-      <div class="section-cta">
-        <a href="/register" class="btn btn-primary btn-lg">Join the Journey — It's Free</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ 11. FINAL CTA ═══ -->
-  <section class="section cta-section" id="cta">
-    <div class="container cta-content">
-      <h2>Ready to Begin Your Ritual?</h2>
-      <p>Join thousands who've transformed their daily practice. Get 25% off your first order.</p>
-      <form class="cta-form" id="ctaForm">
-        <input type="email" placeholder="Enter your email" required>
-        <button type="submit" class="btn btn-primary">Join the Ritual</button>
-      </form>
-      <p class="cta-note">No spam. Unsubscribe anytime. Welcome gift included.</p>
-    </div>
-  </section>
-
-  <!-- ═══ 12. FAQ ═══ -->
+  <!-- ═══ FAQ ═══ -->
   <section class="section section-alt faq" id="faq">
     <div class="container">
       <h2 class="section-title">Frequently Asked Questions</h2>
       <div class="faq-list">
         <details class="faq-item">
           <summary>What is MindBodyRitual?</summary>
-          <p>MindBodyRitual is a wellness e-commerce platform that combines curated products with guided daily rituals and a gamified reward system. We help you build a consistent wellness practice through beautiful tools and real motivation.</p>
+          <p>MindBodyRitual is a 25-minute morning routine made up of five 5-minute rituals — Move, Unpack, Breathe, Gratitude, and Intention. It is designed for caregivers and children ages 3 and up, and is available as a free app and e-book.</p>
         </details>
         <details class="faq-item">
-          <summary>How does the gamification work?</summary>
-          <p>When you log daily rituals, you earn streak points, collect ritual stones (crystals categorized by Mind, Body, and Ritual), and progress along a journey map. Real milestones unlock real rewards — discounts, free samples, and exclusive products.</p>
+          <summary>What ages is this designed for?</summary>
+          <p>The ritual is designed for caregivers and children ages 3 and up. The kid-friendly language and gentle activities are accessible for young children while remaining meaningful and grounding for adults.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if we don&rsquo;t have a full 25 minutes?</summary>
+          <p>No problem. The guiding principle is &ldquo;better than before, not perfect.&rdquo; On busy mornings, do the first 2 minutes of any step and move on. Even a small dose of the ritual sets a better tone for the whole day.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is the app free?</summary>
+          <p>Yes, the app is free to download on iOS and Android. You can also get the complete e-book version by signing up with your email in the section above.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What is Panbuddha?</summary>
+          <p>Panbuddha is the parent brand behind MindBodyRitual &mdash; a calm, trusted family brand offering product lines that support wellbeing, learning, and joyful everyday experiences.</p>
         </details>
         <details class="faq-item">
           <summary>Do you ship to Canada?</summary>
-          <p>Yes! We're based in Canada and offer free shipping on orders over $75 CAD. Standard shipping takes 3-5 business days within Canada.</p>
-        </details>
-        <details class="faq-item">
-          <summary>What's your return policy?</summary>
-          <p>We offer a 30-day satisfaction guarantee on all products. If you're not happy, reach out and we'll make it right — exchange, store credit, or full refund.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Can I cancel my subscription?</summary>
-          <p>If you subscribe to a ritual box, you can cancel anytime from your account dashboard. No cancellation fees, no questions asked.</p>
+          <p>Yes! We&rsquo;re based in Canada and offer free shipping on orders over $75 CAD. Standard shipping takes 3&ndash;5 business days within Canada.</p>
         </details>
       </div>
     </div>
   </section>
 
-  </main><!-- /barba container -->
-  </div><!-- /barba wrapper -->
-
-  <!-- ═══ 13. FOOTER ═══ -->
+  <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
           <h3>MindBodyRitual</h3>
-          <p>Nourish your mind. Strengthen your body. Honor your ritual.</p>
+          <p>A 5-minute family reset.<br>Move, Unpack, Breathe, Gratitude, Intention.</p>
+          <p class="footer-sub">A <strong>Panbuddha</strong> product.</p>
           <div class="footer-social">
             <a href="#" aria-label="Instagram">IG</a>
             <a href="#" aria-label="TikTok">TK</a>
@@ -463,32 +443,29 @@
           </div>
         </div>
         <div class="footer-links">
-          <h4>Shop</h4>
-          <a href="#shop">Mind</a>
-          <a href="#shop">Body</a>
-          <a href="#shop">Ritual</a>
-          <a href="#shop">Gift Cards</a>
+          <h4>The Ritual</h4>
+          <a href="#rituals">Move</a>
+          <a href="#rituals">Unpack</a>
+          <a href="#rituals">Breathe</a>
+          <a href="#rituals">Gratitude</a>
+          <a href="#rituals">Intention</a>
         </div>
         <div class="footer-links">
-          <h4>Learn</h4>
-          <a href="#blog">Journal</a>
-          <a href="#gamification">Your Journey</a>
+          <h4>Resources</h4>
+          <a href="#pack">What You Get</a>
+          <a href="#download">Download App</a>
+          <a href="#download">Free e-Book</a>
           <a href="#faq">FAQ</a>
-          <a href="#contact">Contact</a>
         </div>
         <div class="footer-links">
           <h4>Company</h4>
-          <a href="/about">Our Story</a>
+          <a href="/about">About</a>
           <a href="/privacy">Privacy Policy</a>
           <a href="/terms">Terms of Service</a>
-          <a href="/shipping">Shipping Info</a>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; <span id="year"></span> MindBodyRitual. All rights reserved.</p>
-        <div class="payment-badges">
-          <span>Visa</span> <span>MC</span> <span>Amex</span> <span>Apple Pay</span>
-        </div>
+        <p>&copy; <span id="year"></span> MindBodyRitual &middot; A Panbuddha product. All rights reserved.</p>
       </div>
     </div>
   </footer>
@@ -497,10 +474,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
 
-  <!-- Barba.js for page transitions -->
-  <script src="https://cdn.jsdelivr.net/npm/@barba/core@2.10.3/dist/barba.umd.min.js"></script>
-
-  <!-- Barba transition overlay -->
+  <!-- Transition overlay -->
   <div class="barba-transition" id="barbaTransition"></div>
 
   <script src="./js/app.js"></script>
