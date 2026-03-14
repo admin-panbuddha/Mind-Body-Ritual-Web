@@ -188,31 +188,64 @@
       );
     });
 
-    /* ── Mission text ───────────────────────────────────── */
-    const missionText = document.querySelector('.mission-text');
-    if (missionText) {
-      gsap.fromTo([
-        missionText.querySelector('.mission-lead'),
-        missionText.querySelector('.mission-body'),
-        missionText.querySelector('.mission-quote'),
-        missionText.querySelector('.mission-note')
-      ].filter(Boolean),
-        { opacity: 0, y: 30 },
+    /* ── Mission: heading word reveal ──────────────────── */
+    const missionHeading = document.querySelector('.mission-heading');
+    if (missionHeading) {
+      const words = splitWords(missionHeading);
+      gsap.fromTo(words,
+        { opacity: 0, y: 28 },
         {
-          opacity: 1, y: 0, duration: 0.75, ease: 'power2.out', stagger: 0.18,
-          scrollTrigger: { trigger: missionText, start: 'top 80%', once: true }
+          opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out',
+          scrollTrigger: { trigger: missionHeading, start: 'top 88%', once: true }
         }
       );
     }
 
-    /* ── Mission stat cards — stagger in ──────────────── */
-    const missionStats = document.querySelectorAll('.mission-stat');
-    if (missionStats.length) {
-      gsap.fromTo(missionStats,
-        { opacity: 0, y: 30, scale: 0.9 },
+    /* ── Mission: text elements stagger ────────────────── */
+    const missionText = document.querySelector('.mission-text');
+    if (missionText) {
+      gsap.fromTo(
+        ['.mission-body', '.mission-quote', '.mission-note'].map(s => missionText.querySelector(s)).filter(Boolean),
+        { opacity: 0, y: 24 },
         {
-          opacity: 1, y: 0, scale: 1, duration: 0.65, ease: 'back.out(1.5)', stagger: 0.12,
-          scrollTrigger: { trigger: missionStats[0].closest('.mission-stats-stack'), start: 'top 82%', once: true }
+          opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', stagger: 0.16,
+          scrollTrigger: { trigger: missionText, start: 'top 82%', once: true }
+        }
+      );
+    }
+
+    /* ── Mission: blobs scale in ────────────────────────── */
+    const blobs = document.querySelectorAll('.m-blob');
+    if (blobs.length) {
+      gsap.fromTo(blobs,
+        { opacity: 0, scale: 0.5 },
+        {
+          opacity: 1, scale: 1, duration: 1.1, ease: 'power2.out', stagger: 0.2,
+          scrollTrigger: { trigger: '.mission-visual', start: 'top 85%', once: true }
+        }
+      );
+    }
+
+    /* ── Mission: mascot slides in ──────────────────────── */
+    const mascot = document.querySelector('.mission-mascot');
+    if (mascot) {
+      gsap.fromTo(mascot,
+        { opacity: 0, x: 40, y: 20 },
+        {
+          opacity: 1, x: 0, y: 0, duration: 1, ease: 'power2.out', delay: 0.3,
+          scrollTrigger: { trigger: '.mission-visual', start: 'top 85%', once: true }
+        }
+      );
+    }
+
+    /* ── Mission: stones pop in ─────────────────────────── */
+    const stones = document.querySelectorAll('.m-stone');
+    if (stones.length) {
+      gsap.fromTo(stones,
+        { opacity: 0, scale: 0.5, y: 20 },
+        {
+          opacity: 1, scale: 1, y: 0, duration: 0.65, ease: 'back.out(2)', stagger: 0.15, delay: 0.5,
+          scrollTrigger: { trigger: '.mission-visual', start: 'top 85%', once: true }
         }
       );
     }
