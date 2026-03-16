@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"C:/Users/nicho\" stash pop stash@{0})",
+      "Bash(git -C \"C:/Users/nicho\" stash list)",
+      "Bash(git -C \"C:/Users/nicho\" show stash@{0}^3 --name-only)"
+    ]
+  }
+}
