@@ -1,4 +1,4 @@
-import { fetchOneEntry } from '@builder.io/sdk-react'
+import { builder } from '@builder.io/react'
 import { BUILDER_API_KEY, BUILDER_MODELS } from '@/lib/builder'
 
 import { Navbar } from '@/components/sections/Navbar'
@@ -14,14 +14,17 @@ import { FAQSection } from '@/components/sections/FAQSection'
 import { Footer } from '@/components/sections/Footer'
 import { BuilderContent } from '@/components/builder/BuilderContent'
 
+builder.init(BUILDER_API_KEY)
+
 export default async function HomePage() {
   // Check if a page has been created in Builder.io for "/"
   // Returns null if no Builder.io page exists yet → falls back to coded sections
-  const builderContent = await fetchOneEntry({
-    model: BUILDER_MODELS.page,
-    apiKey: BUILDER_API_KEY,
-    userAttributes: { urlPath: '/' },
-  }).catch(() => null) // safe fallback if API key not configured
+  const builderContent = await builder
+    .get(BUILDER_MODELS.page, {
+      userAttributes: { urlPath: '/' },
+    })
+    .toPromise()
+    .catch(() => null)
 
   return (
     <>
@@ -35,8 +38,8 @@ export default async function HomePage() {
           />
         ) : (
           // ── No Builder.io page yet → show coded sections ──────────────
-          // To take over this page visually: go to builder.io/content,
-          // create a new Page, set the URL to "/", add your sections.
+          // To take over visually: go to builder.io/content,
+          // create a Page at URL "/" and publish it.
           <>
             <Hero />
             <SocialProof />
