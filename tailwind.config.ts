@@ -29,11 +29,8 @@ const config: Config = {
       },
       // ── Typography ──────────────────────────────────────────────
       fontFamily: {
-        heading: ['Lora', 'Georgia', 'serif'],
-        body:    ['Raleway', 'Inter', 'sans-serif'],
-        // Keep legacy fonts for backward compat
-        crimson: ['Crimson Pro', 'Georgia', 'serif'],
-        inter:   ['Inter', 'sans-serif'],
+        heading: ['var(--font-lora)', 'Georgia', 'serif'],
+        body:    ['var(--font-raleway)', 'system-ui', 'sans-serif'],
       },
       // ── Spacing scale ────────────────────────────────────────────
       spacing: {

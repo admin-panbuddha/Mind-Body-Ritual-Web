@@ -1,5 +1,22 @@
 import type { Metadata, Viewport } from 'next'
+import { Lora, Raleway } from 'next/font/google'
 import './globals.css'
+
+// ── Fonts loaded via next/font (self-hosted, zero layout shift) ──
+const lora = Lora({
+  subsets: ['latin'],
+  variable: '--font-lora',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+})
+
+const raleway = Raleway({
+  subsets: ['latin'],
+  variable: '--font-raleway',
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
+})
 
 export const metadata: Metadata = {
   title: 'MindBodyRitual — 25-Minute Family Wellness Ritual',
@@ -51,7 +68,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${lora.variable} ${raleway.variable}`}>
       <body className="bg-cream text-[var(--text)] antialiased">
         {children}
       </body>

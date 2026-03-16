@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Raleway:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+/* Fonts are loaded via next/font/google in src/app/layout.tsx */
+/* CSS @import removed — next/font self-hosts fonts for zero layout shift */
 
 @tailwind base;
 @tailwind components;
@@ -37,13 +38,13 @@ html {
 body {
   background-color: var(--cream);
   color: var(--text);
-  font-family: 'Raleway', 'Inter', sans-serif;
+  font-family: var(--font-raleway), system-ui, sans-serif;
   line-height: 1.6;
 }
 
 /* ── Headings ───────────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-lora), Georgia, serif;
   line-height: 1.2;
   color: var(--text);
 }
