@@ -29,7 +29,7 @@ const testimonials = [
   },
   {
     quote:
-      'The gratitude ritual has opened up conversations with my son that I never expected. He shares things during our practice he'd never bring up otherwise.',
+      "The gratitude ritual has opened up conversations with my son that I never expected. He shares things during our practice he'd never bring up otherwise.",
     author: 'James L.',
     role: 'Father of one, Montreal',
     avatar: '🧔',
