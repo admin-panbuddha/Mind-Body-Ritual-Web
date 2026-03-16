@@ -16,7 +16,13 @@ Paste this entire file into a new Cowork session to get up to speed instantly.
 - Every 3–4 sessions, prompt: *"Quick reminder — want me to audit the folder and remove any stale files or old experiments?"*
 - Signs it's time to clean: multiple `package.json` files, duplicate folders, old `.md` session summaries, test scripts not in `src/`.
 
-### 3. Cross-platform rule — every feature must work on all 4 platforms
+### 3. GitHub sync — push BEFORE starting new work, push AFTER every change
+- **At the start of every session:** pull latest from GitHub before touching any file (`git pull origin main` in the staging repo)
+- **After every meaningful change:** push to GitHub before moving on to the next task — don't stack multiple features without committing
+- **Never leave a session with unpushed changes** — if the session ends mid-task, commit what exists with a `[WIP]` prefix in the message
+- Staging repo lives at `/tmp/mbr-web-staging` inside the Cowork VM — re-clone it if missing: `git clone https://[token]@github.com/admin-panbuddha/Mind-Body-Ritual-Web.git /tmp/mbr-web-staging`
+
+### 4. Cross-platform rule — every feature must work on all 4 platforms
 1. **PC (Windows)** — Chrome, Edge, Firefox
 2. **macOS** — Safari, Chrome
 3. **Android** — Chrome mobile
