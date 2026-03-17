@@ -70,7 +70,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${lora.variable} ${raleway.variable}`}>
-      <body className="bg-cream text-[var(--text)] antialiased">
+      <body className="bg-cream text-[var(--text)] antialiased" suppressHydrationWarning>
         <PageTransition>{children}</PageTransition>
       </body>
     </html>

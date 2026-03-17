@@ -1,102 +1,349 @@
 'use client'
 
-import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
+/**
+ * RitualCards — Scroll-Driven Sticky Reveal
+ * ──────────────────────────────────────────────────────────────────
+ * Layout:
+ *   • IONOS video fills 100% width as the background layer (z-index 0)
+ *   • Sticky panel height = video's native 16:9 aspect ratio — scales with browser width
+ *   • Ritual steps panel floats over the LEFT half of the video (z-index above video)
+ *   • A left-to-right gradient makes the text area readable without hiding the video
+ *   • No shadow, no border, no rounded corners — video blends into the page
+ *   • Top + bottom cream gradients blend the video into the sections above/below
+ */
+
+import { useRef, useState } from 'react'
+import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react'
+import { Icon } from '@/components/ui/Icon'
+
+// ─── IONOS video source ──────────────────────────────────────────
+const RITUAL_VIDEO_SRC = 'https://mindbodyritual.ca/-videos/website-center-page.mp4'
+const CREAM = '#FAF9F2'
+// ────────────────────────────────────────────────────────────────
 
 const rituals = [
   {
     step: 1,
-    emoji: '🌞',
+    icon: 'ui_Icon_Sun',
     title: 'Wake-Up Stretch',
     subtitle: 'Body',
-    duration: '5 min',
-    iconBg: 'rgba(229,177,119,0.18)',
-    cardFrom: '#fffbf4',
-    cardTo: '#fdf5e8',
     accentHex: '#C9813A',
-    borderHex: 'rgba(229,177,119,0.3)',
-    glowHex: 'rgba(229,177,119,0.22)',
-    accentClass: 'text-amber',
-    description:
-      'Gentle full-body stretches to wake up muscles, improve circulation, and ease into the day with a smile.',
+    description: 'Gentle full-body stretches to wake up muscles, improve circulation, and ease into the day with a smile.',
     tags: ['Ages 3+', 'No equipment'],
   },
   {
     step: 2,
-    emoji: '🧘',
+    icon: 'ui_Icon_Breath',
     title: 'Breathwork',
     subtitle: 'Mind',
-    duration: '5 min',
-    iconBg: 'rgba(139,168,136,0.22)',
-    cardFrom: '#f6faf6',
-    cardTo: '#edf5ec',
     accentHex: '#3D6B4F',
-    borderHex: 'rgba(139,168,136,0.32)',
-    glowHex: 'rgba(61,107,79,0.16)',
-    accentClass: 'text-forest',
-    description:
-      'Simple breathing exercises that calm the nervous system, build focus, and set a peaceful tone for the day.',
+    description: 'Simple breathing exercises that calm the nervous system, build focus, and set a peaceful tone for the day.',
     tags: ['Calming', 'Focus'],
   },
   {
     step: 3,
-    emoji: '💪',
+    icon: 'ui_Icon_Flow',
     title: 'Movement Flow',
     subtitle: 'Energy',
-    duration: '5 min',
-    iconBg: 'rgba(139,92,246,0.12)',
-    cardFrom: '#fdf9ff',
-    cardTo: '#f3eeff',
     accentHex: '#7C3AED',
-    borderHex: 'rgba(139,92,246,0.2)',
-    glowHex: 'rgba(139,92,246,0.14)',
-    accentClass: 'text-lavender',
-    description:
-      'Fun, energising movement — animal walks, yoga poses, balance challenges — that kids actually look forward to.',
+    description: 'Fun, energising movement — animal walks, yoga poses, balance challenges — that kids actually look forward to.',
     tags: ['High energy', 'Playful'],
   },
   {
     step: 4,
-    emoji: '🌿',
+    icon: 'ui_Icon_leaf',
     title: 'Nature Moment',
     subtitle: 'Connection',
-    duration: '5 min',
-    iconBg: 'rgba(139,168,136,0.28)',
-    cardFrom: '#f4fbf4',
-    cardTo: '#e6f4e6',
     accentHex: '#5a8a6a',
-    borderHex: 'rgba(139,168,136,0.3)',
-    glowHex: 'rgba(139,168,136,0.2)',
-    accentClass: 'text-sage',
-    description:
-      'A mindful pause to notice the natural world — light, weather, plants, sounds — and feel part of something larger.',
+    description: 'A mindful pause to notice the natural world — light, weather, plants, sounds — and feel part of something larger.',
     tags: ['Mindfulness', 'Grounding'],
   },
   {
     step: 5,
-    emoji: '💛',
+    icon: 'ui_Icon_Lotus',
     title: 'Gratitude Practice',
     subtitle: 'Heart',
-    duration: '5 min',
-    iconBg: 'rgba(201,169,110,0.18)',
-    cardFrom: '#fdfbf5',
-    cardTo: '#f8f0dc',
     accentHex: '#A8843A',
-    borderHex: 'rgba(201,169,110,0.3)',
-    glowHex: 'rgba(201,169,110,0.22)',
-    accentClass: 'text-gold',
-    description:
-      "Share one thing you're grateful for. Build the emotional habit of appreciation that lasts a lifetime.",
+    description: "Share one thing you're grateful for. Build the emotional habit of appreciation that lasts a lifetime.",
     tags: ['Emotional health', 'Bonding'],
   },
 ]
 
-export function RitualCards() {
-  return (
-    <section id="rituals" className="section-py bg-cream">
-      <div className="container-wide">
+// ── Individual ritual step ───────────────────────────────────────
+function RitualStep({
+  ritual, index, total, progress, reduce, minutesPerRitual,
+}: {
+  ritual: typeof rituals[number]
+  index: number
+  total: number
+  progress: ReturnType<typeof useScroll>['scrollYProgress']
+  reduce: boolean | null
+  minutesPerRitual: number
+}) {
+  const activeRange = 0.75
+  const sliceSize   = activeRange / total
+  const s   = index * sliceSize
+  const e   = (index + 1) * sliceSize
+  const mid = s + sliceSize * 0.5
 
-        {/* ── Header ─────────────────────────────────────────────── */}
-        <Reveal className="text-center max-w-2xl mx-auto mb-12">
+  const fadeIn  = Math.min(s + 0.03, mid)
+  const fadeOut = Math.max(e - 0.03, mid)
+
+  const opacity     = useTransform(progress, [s, fadeIn, mid, fadeOut, e], [0.22, 1, 1, 1, 0.22])
+  const descIn      = Math.min(s + 0.04, mid)
+  const descOut     = Math.max(e - 0.04, mid)
+  const descOpacity = useTransform(progress, [s, descIn, mid, descOut, e], [0, 1, 1, 1, 0])
+  const descY       = useTransform(progress, [s, descIn, descOut, e], [10, 0, 0, -10])
+  const tagIn       = Math.min(s + 0.05, mid)
+  const tagOut      = Math.max(e - 0.05, mid)
+  const tagOpacity  = useTransform(
+    progress,
+    [tagIn, Math.min(tagIn + 0.04, mid), Math.max(tagOut - 0.04, mid), tagOut],
+    [0, 1, 1, 0]
+  )
+  const barIn    = Math.min(s + 0.03, mid)
+  const barOut   = Math.max(e - 0.03, mid)
+  const barScale = useTransform(progress, [s, barIn, barOut, e], [0, 1, 1, 0])
+
+  // Whole-card scale: inactive cards sit at 0.94, active breathes up to 1.06
+  const cardScale = useTransform(
+    progress,
+    [s, fadeIn, mid, fadeOut, e],
+    [0.94, 1.04, 1.06, 1.04, 0.94]
+  )
+
+  // Description height: collapses to 0 when not active so no phantom spacing
+  const descMaxH = useTransform(
+    progress,
+    [s, descIn, descOut, e],
+    ['0px', '110px', '110px', '0px']
+  )
+
+  return (
+    <motion.div
+      style={reduce ? {} : {
+        opacity,
+        scale: cardScale,
+        transformOrigin: 'left center',
+      }}
+      className="relative last:pb-0"
+    >
+
+      {/* Vertical connector line */}
+      <motion.div
+        style={reduce ? {} : { scaleY: barScale, transformOrigin: 'top' }}
+        className="absolute left-[22px] top-11 bottom-0 w-[2px] rounded-full last:hidden"
+        aria-hidden
+      >
+        <div className="w-full h-full" style={{ backgroundColor: `${ritual.accentHex}50` }} />
+      </motion.div>
+
+      {/* Icon + title row — single compact line, no wrapping */}
+      <div className="flex items-center gap-3">
+        <motion.div
+          animate={reduce ? {} : { scale: [1, 1.10, 1], opacity: [0.85, 1, 0.85] }}
+          transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.6 }}
+          className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+          style={{ backgroundColor: `${ritual.accentHex}20`, border: `1.5px solid ${ritual.accentHex}40` }}
+        >
+          <Icon name={ritual.icon} size={20} />
+        </motion.div>
+
+        <div className="flex-1 flex items-center justify-between gap-3 min-w-0">
+          <div className="min-w-0">
+            <span className="font-body text-[10px] font-bold uppercase tracking-widest block"
+                  style={{ color: ritual.accentHex }}>
+              {ritual.subtitle}
+            </span>
+            {/* whitespace-nowrap keeps title on one line */}
+            <h3 className="font-heading font-semibold text-[15px] text-[var(--text)] leading-tight whitespace-nowrap">
+              {ritual.title}
+            </h3>
+          </div>
+          <span className="font-body text-[10px] font-medium text-forest
+                           bg-white/70 rounded-full px-2.5 py-0.5 border border-forest/20 tabular-nums shrink-0">
+            {minutesPerRitual} min
+          </span>
+        </div>
+      </div>
+
+      {/* Description + tags — height collapses to 0 when inactive (no phantom gaps) */}
+      <motion.div
+        style={reduce ? {} : { maxHeight: descMaxH, opacity: descOpacity, y: descY }}
+        className="overflow-hidden pl-[52px]"
+      >
+        <p className="font-body text-xs text-[var(--text-light)] leading-relaxed pt-1">
+          {ritual.description}
+        </p>
+        <motion.div style={reduce ? {} : { opacity: tagOpacity }} className="flex flex-wrap gap-1 mt-1.5">
+          {ritual.tags.map(tag => (
+            <span key={tag}
+                  className="font-body text-[9px] font-medium text-forest/70
+                             bg-white/60 rounded-full px-2 py-0.5 border border-forest/15">
+              {tag}
+            </span>
+          ))}
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+// ── Animated pill number ─────────────────────────────────────────
+function AnimatedNumber({ value }: { value: number }) {
+  const [display, setDisplay]     = useState(value)
+  const [prev, setPrev]           = useState(value)
+  const [animating, setAnimating] = useState(false)
+
+  if (value !== prev) {
+    setPrev(value)
+    setAnimating(true)
+    setDisplay(value)
+    setTimeout(() => setAnimating(false), 220)
+  }
+
+  return (
+    <span className="inline-block tabular-nums transition-all duration-[180ms] ease-out"
+          style={{ opacity: animating ? 0.6 : 1, transform: animating ? `translateY(${value > prev ? '-3px' : '3px'})` : 'translateY(0)' }}>
+      {display}
+    </span>
+  )
+}
+
+// ── Minutes slider ────────────────────────────────────────────────
+function RitualSlider({
+  minutesPerRitual, setMinutesPerRitual,
+}: {
+  minutesPerRitual: number
+  setMinutesPerRitual: (v: number) => void
+}) {
+  const ritualCount  = 5
+  const totalMinutes = ritualCount * minutesPerRitual
+  const fillPct      = (minutesPerRitual / 15) * 100
+
+  return (
+    <div className="flex flex-col items-center gap-5 w-full">
+
+      <div className="ritual-headline-wrap">
+        <p className="font-heading text-[1.35rem] md:text-[1.6rem] leading-snug text-[var(--text)] text-center max-w-sm mx-auto">
+          Select how long you want{' '}
+          <span className="ritual-headline-accent text-forest">each ritual.</span>
+        </p>
+      </div>
+
+      <div className="inline-flex items-center gap-2.5 bg-forest/[0.07] rounded-full px-5 py-2.5 border border-forest/[0.12]">
+        <Icon name="ui_Icon_Clock" size={16} className="shrink-0" />
+        <span className="font-body text-sm font-semibold text-forest">
+          <AnimatedNumber value={totalMinutes} /> minutes total
+        </span>
+        <span className="w-px h-4 bg-forest/20 shrink-0" />
+        <span className="font-body text-sm text-[var(--text-muted)]">
+          {ritualCount} rituals × <AnimatedNumber value={minutesPerRitual} /> min
+        </span>
+      </div>
+
+      <div className="w-full max-w-xs">
+        <div className="flex items-center gap-3">
+          <span className="font-body text-xs text-[var(--text-muted)] tabular-nums w-4 text-right shrink-0 select-none">0</span>
+          <div className="relative flex-1 flex items-center h-8">
+            <input
+              type="range" min={0} max={15} step={1}
+              value={minutesPerRitual}
+              onChange={(e) => setMinutesPerRitual(Number(e.target.value))}
+              aria-label="Minutes per ritual"
+              className="ritual-slider w-full"
+            />
+          </div>
+          <span className="font-body text-xs text-[var(--text-muted)] tabular-nums w-5 shrink-0 select-none">15</span>
+        </div>
+
+        <div className="relative h-5 mt-1 mx-7" aria-hidden>
+          {[0, 5, 10, 15].map((mark) => {
+            const pct = (mark / 15) * 100
+            const isActive = minutesPerRitual >= mark
+            return (
+              <div key={mark} className="absolute flex flex-col items-center -translate-x-1/2" style={{ left: `${pct}%` }}>
+                <div className="w-px h-2 rounded-full mb-0.5 transition-colors duration-150"
+                     style={{ backgroundColor: isActive ? '#3D6B4F' : '#C8C4B8' }} />
+                <span className="font-body text-[10px] tabular-nums leading-none transition-colors duration-150"
+                      style={{ color: isActive ? '#3D6B4F' : '#A8A49A' }}>
+                  {mark}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes ritualHeadlineFadeUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes ritualShimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        .ritual-headline-wrap { animation: ritualHeadlineFadeUp 0.55s cubic-bezier(0.22,1,0.36,1) both; }
+        .ritual-headline-accent {
+          display: inline;
+          background: linear-gradient(90deg, var(--forest) 0%, var(--forest) 30%, #8BA888 50%, var(--forest) 70%, var(--forest) 100%);
+          background-size: 200% auto;
+          -webkit-background-clip: text; background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: ritualShimmer 1.4s ease-out 0.6s both;
+        }
+        .ritual-slider {
+          -webkit-appearance: none; appearance: none;
+          height: 3px; border-radius: 9999px; outline: none; cursor: pointer;
+          background: linear-gradient(to right, #3D6B4F 0%, #3D6B4F ${fillPct}%, #E2DFD5 ${fillPct}%, #E2DFD5 100%);
+          transition: background 0.08s linear;
+        }
+        .ritual-slider::-webkit-slider-thumb {
+          -webkit-appearance: none; appearance: none;
+          width: 20px; height: 20px; border-radius: 50%;
+          background: #3D6B4F; border: 3px solid #FAF9F2;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.18); cursor: pointer;
+          transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .ritual-slider::-webkit-slider-thumb:hover { transform: scale(1.18); box-shadow: 0 2px 10px rgba(0,0,0,0.2), 0 0 0 5px rgba(61,107,79,0.1); }
+        .ritual-slider:focus-visible::-webkit-slider-thumb { box-shadow: 0 1px 4px rgba(0,0,0,0.18), 0 0 0 3px rgba(61,107,79,0.35); }
+        .ritual-slider:active::-webkit-slider-thumb { transform: scale(1.08); }
+        .ritual-slider::-moz-range-thumb {
+          width: 20px; height: 20px; border-radius: 50%;
+          background: #3D6B4F; border: 3px solid #FAF9F2;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.18); cursor: pointer;
+          transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .ritual-slider::-moz-range-thumb:hover { transform: scale(1.18); }
+        .ritual-slider:focus-visible::-moz-range-thumb { box-shadow: 0 1px 4px rgba(0,0,0,0.18), 0 0 0 3px rgba(61,107,79,0.35); }
+        .ritual-slider::-moz-range-track { height: 3px; background: #E2DFD5; border-radius: 9999px; border: none; }
+        .ritual-slider::-moz-range-progress { height: 3px; background: #3D6B4F; border-radius: 9999px; }
+      `}</style>
+    </div>
+  )
+}
+
+// ── Main export ──────────────────────────────────────────────────
+export function RitualCards() {
+  const ref          = useRef<HTMLDivElement>(null)
+  const shouldReduce = useReducedMotion()
+  const [minutesPerRitual, setMinutesPerRitual] = useState(5)
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end end'],
+  })
+
+  // CTA fade — computed at top level (not inside JSX) to satisfy hooks rules
+  const ctaOpacity = useTransform(scrollYProgress, [0.72, 0.80], [0, 1])
+
+  return (
+    <section id="rituals" className="bg-cream">
+
+      {/* Header — scrolls normally above the sticky zone */}
+      <div className="section-py pb-0">
+        <div className="container-wide text-center max-w-2xl mx-auto">
           <span className="inline-block font-body text-xs font-semibold tracking-widest uppercase text-forest mb-4">
             The Five Rituals
           </span>
@@ -104,184 +351,131 @@ export function RitualCards() {
             Five minutes each.<br />A lifetime of impact.
           </h2>
           <p className="font-body text-body-lg text-[var(--text-light)] mb-7">
-            Each ritual is carefully designed to be short enough to actually do
-            and meaningful enough to matter.
+            Each ritual is carefully designed to be short enough to actually do and meaningful enough to matter.
           </p>
-          {/* 25-minute total pill */}
-          <div className="inline-flex items-center gap-2.5 bg-forest/[0.07] rounded-full
-                          px-5 py-2.5 border border-forest/[0.12]">
-            <span className="text-base">⏱</span>
-            <span className="font-body text-sm font-semibold text-forest">25 minutes total</span>
-            <span className="w-px h-4 bg-forest/20" />
-            <span className="font-body text-sm text-[var(--text-muted)]">5 rituals × 5 min</span>
-          </div>
-        </Reveal>
-
-        {/* ── Step connector row ──────────────────────────────────── */}
-        <Reveal delay={0.1} className="hidden sm:flex items-center justify-center gap-1.5 mb-10">
-          {rituals.map((r, i) => (
-            <div key={r.step} className="flex items-center gap-1.5">
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center
-                           text-[11px] font-bold font-body text-white shadow-soft-sm"
-                style={{ backgroundColor: r.accentHex }}
-              >
-                {r.step}
-              </div>
-              {i < rituals.length - 1 && (
-                <div className="w-10 h-px bg-gradient-to-r from-[var(--border)] to-[var(--border-light)]" />
-              )}
-            </div>
-          ))}
-        </Reveal>
-
-        {/* ── Cards grid ─────────────────────────────────────────── */}
-        <RevealStagger className="grid md:grid-cols-2 lg:grid-cols-3 gap-5" stagger={0.1}>
-
-          {rituals.map((ritual) => (
-            <RevealItem key={ritual.title}>
-            <div
-              className="group relative rounded-3xl overflow-hidden cursor-default h-full
-                          transition-all duration-[350ms]
-                          hover:-translate-y-2"
-              style={{
-                background: `linear-gradient(145deg, ${ritual.cardFrom} 0%, ${ritual.cardTo} 100%)`,
-                border: `1px solid ${ritual.borderHex}`,
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.boxShadow =
-                  `0 20px 60px ${ritual.glowHex}, 0 4px 16px rgba(0,0,0,0.06)`
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.boxShadow = ''
-              }}
-            >
-              {/* Top accent stripe */}
-              <div
-                className="absolute top-0 left-0 right-0 h-[3px]"
-                style={{
-                  background: `linear-gradient(90deg, ${ritual.accentHex}, ${ritual.accentHex}55, transparent)`,
-                }}
-              />
-
-              <div className="p-6 pt-7">
-                {/* Step badge + duration */}
-                <div className="flex items-center justify-between mb-5">
-                  <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center
-                               text-[11px] font-bold font-body text-white"
-                    style={{ backgroundColor: ritual.accentHex }}
-                  >
-                    {ritual.step}
-                  </div>
-                  <span
-                    className="font-body text-xs font-semibold text-[var(--text-light)]
-                               bg-white/80 backdrop-blur-sm rounded-full px-3 py-1
-                               border border-[var(--border-light)]"
-                  >
-                    {ritual.duration}
-                  </span>
-                </div>
-
-                {/* Icon container */}
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 text-3xl
-                             group-hover:scale-110 transition-transform duration-[250ms]"
-                  style={{ backgroundColor: ritual.iconBg }}
-                >
-                  {ritual.emoji}
-                </div>
-
-                {/* Category */}
-                <span className={`font-body text-[11px] font-semibold uppercase tracking-widest ${ritual.accentClass} mb-1 block`}>
-                  {ritual.subtitle}
-                </span>
-
-                {/* Title */}
-                <h3 className="font-heading font-semibold text-heading-sm text-[var(--text)] mb-2">
-                  {ritual.title}
-                </h3>
-
-                {/* Description */}
-                <p className="font-body text-body-sm text-[var(--text-light)] leading-relaxed mb-4">
-                  {ritual.description}
-                </p>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1.5">
-                  {ritual.tags.map(tag => (
-                    <span
-                      key={tag}
-                      className="font-body text-[11px] font-medium text-[var(--text-light)]
-                                 bg-white/70 rounded-full px-2.5 py-0.5
-                                 border border-[var(--border-light)]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-            </RevealItem>
-          ))}
-
-          {/* ── Panbuddha CTA card ──────────────────────────────── */}
-          <RevealItem>
-          <div
-            className="group relative rounded-3xl overflow-hidden h-full
-                       cursor-pointer transition-all duration-[350ms]
-                       hover:-translate-y-2 hover:shadow-soft-xl"
-            style={{
-              background: 'linear-gradient(135deg, #2C4A37 0%, #3D6B4F 55%, #4d7a60 100%)',
-            }}
-          >
-            {/* Ambient blobs */}
-            <div
-              className="absolute inset-0 opacity-[0.08] pointer-events-none"
-              style={{
-                backgroundImage:
-                  'radial-gradient(circle at 25% 15%, #8BA888 0%, transparent 50%),' +
-                  'radial-gradient(circle at 80% 85%, #C9A96E 0%, transparent 50%)',
-              }}
-            />
-
-            <div className="relative p-6 flex flex-col items-center justify-center text-center min-h-[280px] gap-0">
-              {/* Panda */}
-              <div className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-[250ms]">
-                🐼
-              </div>
-
-              {/* Live badge */}
-              <div className="inline-flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1 mb-3 border border-white/15">
-                <span className="w-1.5 h-1.5 rounded-full bg-sage-light animate-pulse" />
-                <span className="font-body text-[10px] font-semibold text-white/75 uppercase tracking-widest">
-                  Your Guide
-                </span>
-              </div>
-
-              <h3 className="font-heading font-semibold text-heading-sm text-white mb-2">
-                Meet Panbuddha
-              </h3>
-              <p className="font-body text-sm text-white/70 mb-5 leading-relaxed max-w-[200px]">
-                Your family's wellness companion. Start your morning ritual today.
-              </p>
-
-              {/* CTA button */}
-              <div
-                className="inline-flex items-center gap-2 rounded-full px-5 py-2.5
-                           border border-white/25 bg-white/12
-                           hover:bg-white/20 transition-colors duration-200
-                           font-body text-sm font-semibold text-white"
-              >
-                Get the app
-                <span className="text-white/70 text-xs">→</span>
-              </div>
-            </div>
-          </div>
-          </RevealItem>
-
-        </RevealStagger>
+          <RitualSlider minutesPerRitual={minutesPerRitual} setMinutesPerRitual={setMinutesPerRitual} />
+        </div>
       </div>
+
+      {/*
+        Scroll container — tall enough for all 5 rituals + rest buffer.
+        activeRange = 0.75 means all rituals complete at 75% of scroll;
+        remaining 25% keeps the last step visible before sticky releases.
+      */}
+      <div ref={ref} className="relative" style={{ height: `${(rituals.length + 4) * 100}vh` }}>
+
+        {/*
+          ── STICKY PANEL ────────────────────────────────────────────────
+          Height = 16:9 aspect of full viewport width.
+          No fixed pixel/vh height — scales naturally with browser resize.
+        */}
+        <div
+          className="sticky top-0 w-full overflow-hidden"
+          style={{ aspectRatio: '16 / 9' }}
+        >
+
+          {/* ── LAYER 0: Full-width background video ─────────────────── */}
+          <video
+            src={RITUAL_VIDEO_SRC}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ zIndex: 0 }}
+          />
+
+          {/* ── LAYER 1: Left reading gradient ───────────────────────── */}
+          {/*
+            Fades from cream (solid) on the far left → fully transparent by ~55%
+            so the right half of the video is completely unobscured.
+          */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              zIndex: 1,
+              background: `linear-gradient(to right,
+                ${CREAM} 0%,
+                ${CREAM}ee 18%,
+                ${CREAM}cc 32%,
+                ${CREAM}88 44%,
+                ${CREAM}33 54%,
+                transparent 65%)`,
+            }}
+          />
+
+          {/* ── LAYER 1: Top blend into cream header ─────────────────── */}
+          <div
+            className="absolute top-0 left-0 right-0 pointer-events-none"
+            style={{
+              zIndex: 1,
+              height: '12%',
+              background: `linear-gradient(to bottom, ${CREAM}, transparent)`,
+            }}
+          />
+
+          {/* ── LAYER 1: Bottom blend into next section ──────────────── */}
+          <div
+            className="absolute bottom-0 left-0 right-0 pointer-events-none"
+            style={{
+              zIndex: 1,
+              height: '12%',
+              background: `linear-gradient(to top, ${CREAM}, transparent)`,
+            }}
+          />
+
+          {/* ── LAYER 2: Progress bar ─────────────────────────────────── */}
+          <div className="absolute top-[7%] left-0 right-0 px-[4%]" style={{ zIndex: 2 }}>
+            <div className="relative h-[2px] bg-forest/15 rounded-full max-w-[42%] overflow-hidden">
+              <motion.div
+                style={{ scaleX: shouldReduce ? 1 : scrollYProgress, transformOrigin: 'left' }}
+                className="absolute inset-0 bg-forest/60 rounded-full"
+              />
+            </div>
+          </div>
+
+          {/* ── LAYER 2: Ritual steps — left panel ───────────────────── */}
+          {/*
+            Fills the full height of the sticky panel (inset-y-0).
+            justify-between distributes all 5 steps evenly top-to-bottom.
+            Width ~45% so it sits cleanly over the left gradient zone.
+          */}
+          <div
+            className="absolute inset-y-0 left-0 flex flex-col justify-between px-[4%] pt-[14%] pb-[10%]"
+            style={{ zIndex: 2, width: 'clamp(300px, 58%, 700px)' }}
+          >
+            {rituals.map((ritual, i) => (
+              <RitualStep
+                key={ritual.title}
+                ritual={ritual}
+                index={i}
+                total={rituals.length}
+                progress={scrollYProgress}
+                reduce={shouldReduce}
+                minutesPerRitual={minutesPerRitual}
+              />
+            ))}
+          </div>
+
+          {/* ── LAYER 2: CTA ─────────────────────────────────────────── */}
+          <motion.div
+            style={{ zIndex: 2, opacity: shouldReduce ? 1 : ctaOpacity }}
+            className="absolute bottom-[8%] left-0 right-0 text-center pointer-events-none"
+          >
+            <a
+              href="#download"
+              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5
+                         bg-forest text-white font-body text-sm font-semibold
+                         hover:bg-forest-deep transition-colors shadow-soft pointer-events-auto"
+            >
+              🐼 Start your ritual with Panbuddha
+              <span className="text-white/60">→</span>
+            </a>
+          </motion.div>
+
+        </div>{/* end sticky */}
+      </div>{/* end scroll container */}
     </section>
   )
 }

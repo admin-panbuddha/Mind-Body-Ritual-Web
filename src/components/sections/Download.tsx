@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
+import { Icon } from '@/components/ui/Icon'
 
 export function Download() {
   const [email, setEmail] = useState('')
@@ -109,7 +109,7 @@ export function Download() {
 
             {submitted ? (
               <div className="flex items-center justify-center gap-2 py-4 text-forest font-body font-semibold">
-                <span className="text-2xl">🌿</span>
+                <Icon name="ui_Icon_leaf" size={24} className="inline-block" />
                 You're on the list! We'll be in touch soon.
               </div>
             ) : (

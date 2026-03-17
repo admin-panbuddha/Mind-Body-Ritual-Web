@@ -1,32 +1,33 @@
 'use client'
 
 import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
+import { Icon } from '@/components/ui/Icon'
 
 const steps = [
   {
     number: '01',
-    emoji: '📱',
+    icon: 'ui_Icon_Home',
     title: 'Open the app',
     description:
       "Launch MindBodyRitual every morning. Your day's five rituals are waiting — no planning, no prep.",
   },
   {
     number: '02',
-    emoji: '👨‍👧',
+    icon: 'ui_Icon_Meditation',
     title: 'Gather the family',
     description:
       'Call the kids over. Each ritual is designed for caregivers and children to do together, side by side.',
   },
   {
     number: '03',
-    emoji: '🌿',
+    icon: 'ui_Icon_Daily_Ritual_Setting',
     title: 'Follow the ritual',
     description:
       'Guided audio and visuals walk you through each 5-minute ritual — breathwork, movement, gratitude, and more.',
   },
   {
     number: '04',
-    emoji: '💛',
+    icon: 'ui_Icon_History',
     title: 'Build the streak',
     description:
       'Track your family streak, celebrate milestones, and watch your morning ritual become the favourite part of the day.',
@@ -74,7 +75,7 @@ export function HowItWorks() {
                                    leading-none select-none">
                     {step.number}
                   </span>
-                  <span className="text-3xl mt-0.5">{step.emoji}</span>
+                  <Icon name={step.icon} size={30} className="mt-0.5" />
                 </div>
 
                 <h3 className="font-heading font-semibold text-heading-sm text-[var(--text)] mb-2">

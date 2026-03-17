@@ -177,7 +177,7 @@ export function PricingSection() {
         {/* Trust line */}
         <Reveal delay={0.2}>
           <p className="text-center font-body text-sm text-[var(--text-muted)] mt-8">
-            🔒 Secure checkout · Cancel anytime · No credit card required to start free
+            Secure checkout · Cancel anytime · No credit card required to start free
           </p>
         </Reveal>
       </div>

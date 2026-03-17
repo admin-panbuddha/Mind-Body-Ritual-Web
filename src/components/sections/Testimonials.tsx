@@ -1,6 +1,7 @@
 'use client'
 
 import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
+import { Icon } from '@/components/ui/Icon'
 
 const testimonials = [
   {
@@ -8,7 +9,7 @@ const testimonials = [
       "We've tried so many 'family wellness' things that fell apart after a week. This actually stuck. My daughter literally asks for it now every morning.",
     author: 'Sarah M.',
     role: 'Mom of two, Vancouver',
-    avatar: '👩',
+    icon: 'ui_Icon_Meditation',
     stars: 5,
   },
   {
@@ -16,7 +17,7 @@ const testimonials = [
       "The breathwork section alone has been transformative for my anxious 5-year-old. We do it together every morning and I swear it sets the tone for the whole day.",
     author: 'David K.',
     role: 'Dad, Toronto',
-    avatar: '👨',
+    icon: 'ui_Icon_Breath',
     stars: 5,
   },
   {
@@ -24,7 +25,7 @@ const testimonials = [
       "I was skeptical — 25 minutes sounds like a lot. But it goes by so fast and my kids are so engaged. We haven't missed a morning in 6 weeks.",
     author: 'Amara T.',
     role: 'Single mom of three, Calgary',
-    avatar: '👩‍🦱',
+    icon: 'ui_Icon_Flow',
     stars: 5,
   },
   {
@@ -32,7 +33,7 @@ const testimonials = [
       "The gratitude ritual has opened up conversations with my son that I never expected. He shares things during our practice he'd never bring up otherwise.",
     author: 'James L.',
     role: 'Father of one, Montreal',
-    avatar: '🧔',
+    icon: 'ui_Icon_Lotus',
     stars: 5,
   },
   {
@@ -40,7 +41,7 @@ const testimonials = [
       "My 3-year-old does the movement section with me and it's genuinely the cutest thing I've ever seen. We laugh every single morning. Worth it just for that.",
     author: 'Priya R.',
     role: 'New mom, Ottawa',
-    avatar: '👩‍🦳',
+    icon: 'ui_Icon_Sun',
     stars: 5,
   },
   {
@@ -48,7 +49,7 @@ const testimonials = [
       'As someone who struggled with a morning routine myself, having a kid-friendly version that WE do together was the accountability I needed. We both grew.',
     author: 'Chris B.',
     role: 'Dad, Edmonton',
-    avatar: '👱',
+    icon: 'ui_icon_calm',
     stars: 5,
   },
 ]
@@ -97,8 +98,8 @@ export function Testimonials() {
 
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sage/30 to-forest/20
-                                  flex items-center justify-center text-lg border border-[var(--border-light)]">
-                    {t.avatar}
+                                  flex items-center justify-center border border-[var(--border-light)]">
+                    <Icon name={t.icon} size={20} />
                   </div>
                   <div>
                     <p className="font-body font-semibold text-sm text-[var(--text)]">{t.author}</p>

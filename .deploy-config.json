@@ -1,0 +1,11 @@
+{
+  "github_repo": "https://github.com/admin-panbuddha/Mind-Body-Ritual-Web.git",
+  "github_username": "admin-panbuddha",
+  "staging_path": "/sessions/youthful-laughing-pascal/staging/Mind-Body-Ritual-Web",
+  "project_folder": "/sessions/youthful-laughing-pascal/mnt/MindBodyRitual-Website",
+  "railway_url": "https://mind-body-ritual-web-production.up.railway.app",
+  "railway_project_id": "52e9bdac-4519-4351-bd11-4e2a9397b234",
+  "railway_service_id": "c20d966f-2f83-4628-bbce-8ba26cc84f57",
+  "git_user_name": "nicho",
+  "git_user_email": "panbuddha.ca@gmail.com"
+}

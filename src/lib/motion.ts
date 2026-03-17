@@ -1,34 +1,67 @@
 /**
- * Shared Motion (Framer Motion v12) config for MindBodyRitual.
+ * MindBodyRitual — Motion Design Tokens
+ * ──────────────────────────────────────
+ * Aligned with MOTION-SPEC.md (competitive research → timing tokens).
  *
- * ALL animation variants live here so values stay consistent across
- * every component. Components never hard-code durations or easings.
- *
- * Accessibility: every component that uses these variants must call
- * useReducedMotion() and skip animation when it returns true.
- * The <Reveal> and <PageTransition> primitives do this automatically.
+ * Timing is intentionally SLOW compared to typical SaaS sites.
+ * Wellness sites use 300–800ms for reveals because "slow = premium."
+ * See MOTION-SPEC.md for the full rationale.
  */
 
 // ── Easing curves ────────────────────────────────────────────────
 export const EASE = {
-  /** Smooth deceleration — good for entrances */
+  /** Smooth deceleration — all entrances and scroll reveals */
   out: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
-  /** Symmetric — good for hovers */
+  /** Symmetric — hover states, interactive feedback */
   inOut: [0.4, 0, 0.2, 1] as [number, number, number, number],
+  /** Extra-gentle arrival — hero headline, premium entrance */
+  gentle: [0.16, 1, 0.3, 1] as [number, number, number, number],
 } as const
 
 // ── Durations (seconds) ──────────────────────────────────────────
 export const DUR = {
-  instant: 0.12,
-  fast:    0.2,
-  normal:  0.42,
-  slow:    0.65,
+  instant: 0.12,   // color changes, icon swap
+  fast:    0.25,   // button hover scale, tooltip appear
+  normal:  0.5,    // section reveals, card entrances
+  slow:    0.8,    // hero headline entrance
 } as const
 
+// ── Hero entrance ────────────────────────────────────────────────
+/** Staggered entrance for the hero section elements. */
+export const heroContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,    // let page paint first
+    },
+  },
+}
+
+export const heroItem = {
+  hidden:  { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: DUR.slow, ease: EASE.gentle },
+  },
+}
+
+/** Phone mockup — slightly larger motion, arrives last. */
+export const heroPhone = {
+  hidden:  { opacity: 0, y: 36, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 1, ease: EASE.gentle },
+  },
+}
+
 // ── Section / card scroll-reveal ─────────────────────────────────
-/** Generic fade-up used for headings, paragraphs, and stand-alone elements. */
+/** Generic fade-up used for headings, paragraphs, stand-alone elements. */
 export const fadeUp = {
-  hidden:  { opacity: 0, y: 28 },
+  hidden:  { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
@@ -36,7 +69,7 @@ export const fadeUp = {
   },
 }
 
-/** Fade from left — good for sub-headings coming in from the edge. */
+/** Fade from left — for sub-headings or asymmetric layouts. */
 export const fadeLeft = {
   hidden:  { opacity: 0, x: -28 },
   visible: {
@@ -57,12 +90,8 @@ export const scaleIn = {
 }
 
 // ── Stagger orchestration ────────────────────────────────────────
-/**
- * Parent container — triggers staggered children.
- * Pair with staggerItem or any variant that has hidden/visible keys.
- */
 export const staggerContainer = (
-  staggerChildren = 0.1,
+  staggerChildren = 0.12,
   delayChildren = 0.05,
 ) => ({
   hidden: {},
@@ -73,7 +102,7 @@ export const staggerContainer = (
 
 /** Generic child item used inside a staggerContainer. */
 export const staggerItem = {
-  hidden:  { opacity: 0, y: 18 },
+  hidden:  { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
@@ -82,27 +111,23 @@ export const staggerItem = {
 }
 
 // ── Page / route transition ──────────────────────────────────────
-/** Soft fade + slight upward slide on page mount. */
 export const pageTransition = {
   initial:  { opacity: 0, y: 10 },
-  animate:  { opacity: 1, y: 0, transition: { duration: DUR.normal, ease: EASE.out } },
+  animate:  { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE.out } },
   exit:     { opacity: 0, y: -6, transition: { duration: DUR.fast, ease: EASE.inOut } },
 }
 
-// ── Button / interactive element micro-interactions ──────────────
-/** Lift + subtle scale on hover; confirm-press on tap. */
+// ── Button / interactive micro-interactions ──────────────────────
 export const buttonHover = {
   whileHover: { scale: 1.04, transition: { duration: DUR.fast, ease: EASE.inOut } },
   whileTap:   { scale: 0.96, transition: { duration: DUR.instant } },
 }
 
-/** Lighter version for ghost/outline buttons. */
 export const buttonHoverSubtle = {
   whileHover: { scale: 1.025, transition: { duration: DUR.fast, ease: EASE.inOut } },
   whileTap:   { scale: 0.975, transition: { duration: DUR.instant } },
 }
 
-/** Icon-only micro-interaction (rotate + scale). */
 export const iconSpin = {
   whileHover: {
     rotate: 12,

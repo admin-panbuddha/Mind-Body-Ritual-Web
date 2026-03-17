@@ -203,6 +203,34 @@ h1, h2, h3, h4, h5, h6 {
 .reveal-delay-4 { transition-delay: 0.4s; }
 .reveal-delay-5 { transition-delay: 0.5s; }
 
+/* ── Hero ambient breathing orbs ────────────────────────────────── */
+/* Slow opacity + scale pulse that mirrors a breathing rhythm.       */
+/* 6s cycle ≈ calm inhale/exhale (4s in, 2s out).                   */
+/* Only animate opacity + transform — compositor-safe, zero CLS.    */
+@keyframes orbBreathe {
+  0%, 100% { opacity: 0.6;  transform: scale(1) translate(0, 0); }
+  50%      { opacity: 1;    transform: scale(1.04) translate(4px, -3px); }
+}
+
+@keyframes orbBreatheAlt {
+  0%, 100% { opacity: 0.55; transform: scale(1) translate(0, 0); }
+  50%      { opacity: 0.9;  transform: scale(1.06) translate(-3px, 5px); }
+}
+
+.hero-orb-breathe {
+  animation: orbBreathe 6s ease-in-out infinite;
+}
+
+.hero-orb-breathe--delayed {
+  animation: orbBreatheAlt 7s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+.hero-orb-breathe--slow {
+  animation: orbBreathe 8s ease-in-out infinite;
+  animation-delay: -4s;
+}
+
 /* ── Gradient radial utility ─────────────────────────────────────── */
 .bg-gradient-radial {
   background-image: radial-gradient(var(--tw-gradient-stops));

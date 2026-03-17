@@ -1,14 +1,16 @@
 'use client'
 
+import { Icon } from '@/components/ui/Icon'
+
 const items = [
-  '🌿 Loved by 2,400+ families',
-  '⭐ 4.9 App Store rating',
-  '🧘 Breathwork · Movement · Gratitude',
-  '👶 Designed for ages 3+',
-  '⏱ Just 25 minutes a day',
-  '💛 Built by parents, for parents',
-  '🌍 Available on iOS & Android',
-  '🏅 Featured in Wellness Weekly',
+  { icon: 'ui_Icon_leaf', text: 'Loved by 2,400+ families' },
+  { icon: 'ui_Icon_Lotus', text: '4.9 App Store rating' },
+  { icon: 'ui_Icon_Meditation', text: 'Breathwork · Movement · Gratitude' },
+  { icon: 'ui_icon_profile', text: 'Designed for ages 3+' },
+  { icon: 'ui_Icon_Clock', text: 'Just 25 minutes a day' },
+  { icon: 'ui_Icon_inner-peace', text: 'Built by parents, for parents' },
+  { icon: 'ui_Icon_Exploring', text: 'Available on iOS & Android' },
+  { icon: 'ui_Icon_Focus', text: 'Featured in Wellness Weekly' },
 ]
 
 export function SocialProof() {
@@ -22,7 +24,8 @@ export function SocialProof() {
             className="inline-flex items-center gap-2 px-8 font-body text-sm
                        font-medium text-[var(--text-light)] whitespace-nowrap"
           >
-            {item}
+            <Icon name={item.icon} size={16} className="opacity-70" />
+            {item.text}
             <span className="text-[var(--border)] mx-2 select-none">·</span>
           </span>
         ))}

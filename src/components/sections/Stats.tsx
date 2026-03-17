@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { RevealStagger, RevealItem } from '@/components/ui/Reveal'
+import { Icon } from '@/components/ui/Icon'
 
 const stats = [
-  { value: 2400, suffix: '+', label: 'Families using MindBodyRitual', emoji: '👨‍👩‍👧‍👦' },
-  { value: 25, suffix: ' min', label: 'Total daily ritual time', emoji: '⏱' },
-  { value: 5, suffix: '', label: 'Rituals per session', emoji: '🌿' },
-  { value: 4.9, suffix: '★', label: 'App Store rating', emoji: '⭐', isDecimal: true },
+  { value: 2400, suffix: '+', label: 'Families using MindBodyRitual', icon: 'ui_icon_profile' },
+  { value: 25, suffix: ' min', label: 'Total daily ritual time', icon: 'ui_Icon_Clock' },
+  { value: 5, suffix: '', label: 'Rituals per session', icon: 'ui_Icon_Focus' },
+  { value: 4.9, suffix: '★', label: 'App Store rating', icon: 'ui_Icon_Lotus', isDecimal: true },
 ]
 
 function CountUp({
@@ -69,7 +70,9 @@ export function Stats() {
         <RevealStagger className="grid grid-cols-2 lg:grid-cols-4 gap-8" stagger={0.14}>
           {stats.map((stat) => (
             <RevealItem key={stat.label} className="text-center">
-              <div className="text-3xl mb-3">{stat.emoji}</div>
+              <div className="mb-3 flex justify-center">
+                <Icon name={stat.icon} size={36} className="invert brightness-200" />
+              </div>
               <div className="font-heading font-bold text-[clamp(2rem,4vw,3rem)] text-white
                               leading-none mb-2 tabular-nums">
                 <CountUp

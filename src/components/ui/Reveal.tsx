@@ -21,7 +21,7 @@
  *   so Cumulative Layout Shift = 0.
  *
  * viewport margin
- *   `margin: '-60px'` means the animation fires ~60 px before the
+ *   `margin: '-80px'` means the animation fires ~60 px before the
  *   element reaches the viewport edge — feels natural on all devices.
  */
 
@@ -44,10 +44,10 @@ interface RevealProps {
 }
 
 const dirOffset: Record<Direction, { x?: number; y?: number }> = {
-  up:    { y: 28 },
-  down:  { y: -28 },
-  left:  { x: -28 },
-  right: { x: 28 },
+  up:    { y: 30 },
+  down:  { y: -30 },
+  left:  { x: -30 },
+  right: { x: 30 },
   none:  {},
 }
 
@@ -83,7 +83,7 @@ export function Reveal({
       className={className}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: !repeat, margin: '-60px' }}
+      viewport={{ once: !repeat, margin: '-80px' }}
       variants={variants}
       style={{ willChange: 'opacity, transform' }}
     >
@@ -107,7 +107,7 @@ interface RevealStaggerProps {
 export function RevealStagger({
   children,
   className,
-  stagger = 0.1,
+  stagger = 0.12,
   delay = 0.05,
   repeat = false,
 }: RevealStaggerProps) {
@@ -122,7 +122,7 @@ export function RevealStagger({
       className={className}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: !repeat, margin: '-60px' }}
+      viewport={{ once: !repeat, margin: '-80px' }}
       variants={{
         hidden: {},
         visible: {
