@@ -32,10 +32,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# Cowork system files
-.claude/
-.deploy-config.json
-
-# Archives
-*.zip
