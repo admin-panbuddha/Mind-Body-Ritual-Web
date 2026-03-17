@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Lora, Raleway } from 'next/font/google'
+import { PageTransition } from '@/components/ui/PageTransition'
 import './globals.css'
 
 // ── Fonts loaded via next/font (self-hosted, zero layout shift) ──
@@ -70,7 +71,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${lora.variable} ${raleway.variable}`}>
       <body className="bg-cream text-[var(--text)] antialiased">
-        {children}
+        <PageTransition>{children}</PageTransition>
       </body>
     </html>
   )

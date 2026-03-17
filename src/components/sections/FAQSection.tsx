@@ -1,6 +1,6 @@
 'use client'
 
-import { useReveal } from '@/hooks/useReveal'
+import { Reveal } from '@/components/ui/Reveal'
 import { Accordion } from '@/components/ui/Accordion'
 
 const faqs = [
@@ -47,15 +47,13 @@ const faqs = [
 ]
 
 export function FAQSection() {
-  const ref = useReveal()
-
   return (
-    <section id="faq" className="section-py bg-cream" ref={ref}>
+    <section id="faq" className="section-py bg-cream">
       <div className="container-wide">
         <div className="max-w-2xl mx-auto">
 
           {/* Header */}
-          <div className="text-center mb-12 reveal">
+          <Reveal className="text-center mb-12">
             <span className="inline-block font-body text-xs font-semibold tracking-widest
                              uppercase text-forest mb-3">
               FAQ
@@ -69,14 +67,14 @@ export function FAQSection() {
                 hello@mindbodyritual.ca
               </a>
             </p>
-          </div>
+          </Reveal>
 
           {/* Accordion */}
-          <div className="reveal reveal-delay-1 space-y-2">
+          <Reveal delay={0.1} className="space-y-2">
             {faqs.map((faq) => (
               <Accordion key={faq.question} question={faq.question} answer={faq.answer} />
             ))}
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

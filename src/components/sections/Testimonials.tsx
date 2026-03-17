@@ -1,6 +1,6 @@
 'use client'
 
-import { useReveal } from '@/hooks/useReveal'
+import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
 
 const testimonials = [
   {
@@ -54,14 +54,12 @@ const testimonials = [
 ]
 
 export function Testimonials() {
-  const ref = useReveal()
-
   return (
-    <section className="section-py bg-cream overflow-hidden" ref={ref}>
+    <section className="section-py bg-cream overflow-hidden">
       <div className="container-wide">
 
         {/* Header */}
-        <div className="text-center max-w-xl mx-auto mb-16 reveal">
+        <Reveal className="text-center max-w-xl mx-auto mb-16">
           <span className="inline-block font-body text-xs font-semibold tracking-widest
                            uppercase text-forest mb-3">
             Families Love It
@@ -72,42 +70,45 @@ export function Testimonials() {
           <p className="font-body text-body-lg text-[var(--text-light)]">
             Over 2,400 families have made MindBodyRitual part of their morning — here's what they say.
           </p>
-        </div>
+        </Reveal>
 
-        {/* Grid */}
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5">
-          {testimonials.map((t, i) => (
-            <div
-              key={t.author}
-              className={`reveal reveal-delay-${(i % 3) + 1}
-                          break-inside-avoid rounded-3xl p-6
-                          bg-white border border-[var(--border-light)]
-                          hover:shadow-soft transition-all duration-300`}
-            >
-              {/* Stars */}
-              <div className="flex gap-0.5 mb-4">
-                {Array.from({ length: t.stars }).map((_, si) => (
-                  <span key={si} className="text-amber text-sm">★</span>
-                ))}
-              </div>
-
-              <p className="font-body text-body-sm text-[var(--text)] leading-relaxed mb-5 italic">
-                "{t.quote}"
-              </p>
-
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sage/30 to-forest/20
-                                flex items-center justify-center text-lg border border-[var(--border-light)]">
-                  {t.avatar}
+        {/* Grid — staggered masonry */}
+        <RevealStagger
+          className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5"
+          stagger={0.08}
+        >
+          {testimonials.map((t) => (
+            <RevealItem key={t.author}>
+              <div
+                className="break-inside-avoid rounded-3xl p-6
+                            bg-white border border-[var(--border-light)]
+                            hover:shadow-soft transition-shadow duration-300"
+              >
+                {/* Stars */}
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: t.stars }).map((_, si) => (
+                    <span key={si} className="text-amber text-sm">★</span>
+                  ))}
                 </div>
-                <div>
-                  <p className="font-body font-semibold text-sm text-[var(--text)]">{t.author}</p>
-                  <p className="font-body text-xs text-[var(--text-light)]">{t.role}</p>
+
+                <p className="font-body text-body-sm text-[var(--text)] leading-relaxed mb-5 italic">
+                  "{t.quote}"
+                </p>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sage/30 to-forest/20
+                                  flex items-center justify-center text-lg border border-[var(--border-light)]">
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <p className="font-body font-semibold text-sm text-[var(--text)]">{t.author}</p>
+                    <p className="font-body text-xs text-[var(--text-light)]">{t.role}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealStagger>
       </div>
     </section>
   )

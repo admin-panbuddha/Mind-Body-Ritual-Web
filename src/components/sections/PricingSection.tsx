@@ -1,6 +1,6 @@
 'use client'
 
-import { useReveal } from '@/hooks/useReveal'
+import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
@@ -66,14 +66,12 @@ function XIcon() {
 }
 
 export function PricingSection() {
-  const ref = useReveal()
-
   return (
-    <section id="pricing" className="section-py bg-white" ref={ref}>
+    <section id="pricing" className="section-py bg-white">
       <div className="container-wide">
 
         {/* Header */}
-        <div className="text-center max-w-xl mx-auto mb-16 reveal">
+        <Reveal className="text-center max-w-xl mx-auto mb-16">
           <span className="inline-block font-body text-xs font-semibold tracking-widest
                            uppercase text-forest mb-3">
             Pricing
@@ -84,16 +82,15 @@ export function PricingSection() {
           <p className="font-body text-body-lg text-[var(--text-light)]">
             Start free. Upgrade when you're ready. No surprise charges.
           </p>
-        </div>
+        </Reveal>
 
         {/* Plans */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {plans.map((plan, i) => (
+        <RevealStagger className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto" stagger={0.15}>
+          {plans.map((plan) => (
+            <RevealItem key={plan.name}>
             <div
-              key={plan.name}
               className={cn(
-                `reveal reveal-delay-${i + 1}
-                 relative rounded-3xl p-8
+                `relative rounded-3xl p-8
                  border transition-all duration-300`,
                 plan.highlight
                   ? 'bg-forest border-forest shadow-[0_8px_40px_rgba(61,107,79,0.25)] scale-[1.02]'
@@ -173,13 +170,16 @@ export function PricingSection() {
                 ))}
               </ul>
             </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealStagger>
 
         {/* Trust line */}
-        <p className="reveal text-center font-body text-sm text-[var(--text-muted)] mt-8">
-          🔒 Secure checkout · Cancel anytime · No credit card required to start free
-        </p>
+        <Reveal delay={0.2}>
+          <p className="text-center font-body text-sm text-[var(--text-muted)] mt-8">
+            🔒 Secure checkout · Cancel anytime · No credit card required to start free
+          </p>
+        </Reveal>
       </div>
     </section>
   )

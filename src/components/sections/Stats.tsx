@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useReveal } from '@/hooks/useReveal'
+import { RevealStagger, RevealItem } from '@/components/ui/Reveal'
 
 const stats = [
   { value: 2400, suffix: '+', label: 'Families using MindBodyRitual', emoji: '👨‍👩‍👧‍👦' },
@@ -39,18 +39,14 @@ function CountUp({
 
   const display = isDecimal ? current.toFixed(1) : Math.round(current).toLocaleString()
 
-  return (
-    <span>
-      {display}{suffix}
-    </span>
-  )
+  return <span>{display}{suffix}</span>
 }
 
 export function Stats() {
-  const ref = useReveal<HTMLDivElement>()
   const [started, setStarted] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
 
+  // CountUp fires when the section scrolls into view
   useEffect(() => {
     const el = triggerRef.current
     if (!el) return
@@ -61,21 +57,18 @@ export function Stats() {
           observer.disconnect()
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     )
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
   return (
-    <section className="section-py bg-forest" ref={ref}>
+    <section className="section-py bg-forest">
       <div className="container-wide" ref={triggerRef}>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat, i) => (
-            <div
-              key={stat.label}
-              className={`reveal reveal-delay-${i + 1} text-center`}
-            >
+        <RevealStagger className="grid grid-cols-2 lg:grid-cols-4 gap-8" stagger={0.14}>
+          {stats.map((stat) => (
+            <RevealItem key={stat.label} className="text-center">
               <div className="text-3xl mb-3">{stat.emoji}</div>
               <div className="font-heading font-bold text-[clamp(2rem,4vw,3rem)] text-white
                               leading-none mb-2 tabular-nums">
@@ -89,9 +82,9 @@ export function Stats() {
               <p className="font-body text-sm text-white/70 leading-snug max-w-[140px] mx-auto">
                 {stat.label}
               </p>
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealStagger>
       </div>
     </section>
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import { useReveal } from '@/hooks/useReveal'
+import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
 
 const rituals = [
   {
@@ -91,14 +91,12 @@ const rituals = [
 ]
 
 export function RitualCards() {
-  const ref = useReveal()
-
   return (
-    <section id="rituals" className="section-py bg-cream" ref={ref}>
+    <section id="rituals" className="section-py bg-cream">
       <div className="container-wide">
 
         {/* ── Header ─────────────────────────────────────────────── */}
-        <div className="text-center max-w-2xl mx-auto mb-12 reveal">
+        <Reveal className="text-center max-w-2xl mx-auto mb-12">
           <span className="inline-block font-body text-xs font-semibold tracking-widest uppercase text-forest mb-4">
             The Five Rituals
           </span>
@@ -117,10 +115,10 @@ export function RitualCards() {
             <span className="w-px h-4 bg-forest/20" />
             <span className="font-body text-sm text-[var(--text-muted)]">5 rituals × 5 min</span>
           </div>
-        </div>
+        </Reveal>
 
         {/* ── Step connector row ──────────────────────────────────── */}
-        <div className="hidden sm:flex items-center justify-center gap-1.5 mb-10 reveal reveal-delay-1">
+        <Reveal delay={0.1} className="hidden sm:flex items-center justify-center gap-1.5 mb-10">
           {rituals.map((r, i) => (
             <div key={r.step} className="flex items-center gap-1.5">
               <div
@@ -135,18 +133,17 @@ export function RitualCards() {
               )}
             </div>
           ))}
-        </div>
+        </Reveal>
 
         {/* ── Cards grid ─────────────────────────────────────────── */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <RevealStagger className="grid md:grid-cols-2 lg:grid-cols-3 gap-5" stagger={0.1}>
 
-          {rituals.map((ritual, i) => (
+          {rituals.map((ritual) => (
+            <RevealItem key={ritual.title}>
             <div
-              key={ritual.title}
-              className={`reveal reveal-delay-${(i % 3) + 1}
-                          group relative rounded-3xl overflow-hidden cursor-default
+              className="group relative rounded-3xl overflow-hidden cursor-default h-full
                           transition-all duration-[350ms]
-                          hover:-translate-y-2`}
+                          hover:-translate-y-2"
               style={{
                 background: `linear-gradient(145deg, ${ritual.cardFrom} 0%, ${ritual.cardTo} 100%)`,
                 border: `1px solid ${ritual.borderHex}`,
@@ -225,11 +222,13 @@ export function RitualCards() {
                 </div>
               </div>
             </div>
+            </RevealItem>
           ))}
 
           {/* ── Panbuddha CTA card ──────────────────────────────── */}
+          <RevealItem>
           <div
-            className="reveal reveal-delay-3 group relative rounded-3xl overflow-hidden
+            className="group relative rounded-3xl overflow-hidden h-full
                        cursor-pointer transition-all duration-[350ms]
                        hover:-translate-y-2 hover:shadow-soft-xl"
             style={{
@@ -279,8 +278,9 @@ export function RitualCards() {
               </div>
             </div>
           </div>
+          </RevealItem>
 
-        </div>
+        </RevealStagger>
       </div>
     </section>
   )

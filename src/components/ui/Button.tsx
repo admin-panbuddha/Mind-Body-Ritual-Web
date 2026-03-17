@@ -1,7 +1,16 @@
 'use client'
 
+/**
+ * Button — MindBodyRitual design system.
+ *
+ * Uses motion (Framer Motion v12) for hover + tap micro-interactions.
+ * Micro-interactions are disabled automatically when the user has
+ * prefers-reduced-motion: reduce set.
+ */
+
+import { motion, useReducedMotion } from 'motion/react'
 import { cn } from '@/lib/utils'
-import { forwardRef } from 'react'
+import { buttonHover, buttonHoverSubtle } from '@/lib/motion'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'outline'
 type Size    = 'sm' | 'md' | 'lg'
@@ -9,15 +18,14 @@ type Size    = 'sm' | 'md' | 'lg'
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant
   size?: Size
-  asChild?: boolean
   href?: string
 }
 
 const variants: Record<Variant, string> = {
-  primary:   'bg-forest text-cream hover:bg-forest-deep shadow-soft-md hover:shadow-soft-lg active:scale-[.98]',
-  secondary: 'bg-amber text-forest-deep hover:bg-gold shadow-soft-sm hover:shadow-soft-md active:scale-[.98]',
-  ghost:     'bg-transparent text-forest hover:bg-sage-light active:scale-[.98]',
-  outline:   'bg-transparent border-2 border-forest text-forest hover:bg-forest hover:text-cream active:scale-[.98]',
+  primary:   'bg-forest text-cream hover:bg-forest-deep shadow-soft-md hover:shadow-soft-lg',
+  secondary: 'bg-amber text-forest-deep hover:bg-gold shadow-soft-sm hover:shadow-soft-md',
+  ghost:     'bg-transparent text-forest hover:bg-sage-light',
+  outline:   'bg-transparent border-2 border-forest text-forest hover:bg-forest hover:text-cream',
 }
 
 const sizes: Record<Size, string> = {
@@ -26,32 +34,58 @@ const sizes: Record<Size, string> = {
   lg: 'px-8 py-4 text-lg rounded-2xl',
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', className, children, href, ...props }, ref) => {
-    const classes = cn(
-      'inline-flex items-center justify-center gap-2 font-body font-semibold',
-      'cursor-pointer transition-all duration-250 ease-wellness',
-      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-forest focus-visible:outline-offset-2',
-      'disabled:opacity-50 disabled:pointer-events-none',
-      variants[variant],
-      sizes[size],
-      className
-    )
+/** Subtle variants get a lighter scale effect. */
+const subtleVariants: Variant[] = ['ghost', 'outline']
 
-    if (href) {
-      return (
-        <a href={href} className={classes}>
-          {children}
-        </a>
-      )
-    }
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  className,
+  children,
+  href,
+  ...props
+}: ButtonProps) {
+  const shouldReduce = useReducedMotion()
 
+  const classes = cn(
+    'inline-flex items-center justify-center gap-2 font-body font-semibold',
+    'cursor-pointer transition-colors duration-200',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-forest focus-visible:outline-offset-2',
+    'disabled:opacity-50 disabled:pointer-events-none',
+    variants[variant],
+    sizes[size],
+    className
+  )
+
+  const motionProps = shouldReduce
+    ? {}
+    : subtleVariants.includes(variant)
+      ? buttonHoverSubtle
+      : buttonHover
+
+  if (href) {
     return (
-      <button ref={ref} className={classes} {...props}>
+      <motion.a
+        href={href}
+        className={classes}
+        {...motionProps}
+        style={{ willChange: 'transform', display: 'inline-flex' }}
+      >
         {children}
-      </button>
+      </motion.a>
     )
   }
-)
+
+  return (
+    <motion.button
+      className={classes}
+      {...motionProps}
+      style={{ willChange: 'transform' }}
+      {...(props as React.ComponentProps<typeof motion.button>)}
+    >
+      {children}
+    </motion.button>
+  )
+}
 
 Button.displayName = 'Button'

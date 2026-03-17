@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useReveal } from '@/hooks/useReveal'
+import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 
 export function Download() {
-  const ref = useReveal()
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -22,7 +21,7 @@ export function Download() {
   }
 
   return (
-    <section id="download" className="section-py relative overflow-hidden bg-cream" ref={ref}>
+    <section id="download" className="section-py relative overflow-hidden bg-cream">
 
       {/* Background blob */}
       <div className="absolute inset-0 pointer-events-none">
@@ -33,7 +32,7 @@ export function Download() {
       <div className="container-wide relative z-10">
         <div className="max-w-2xl mx-auto text-center">
 
-          <div className="reveal mb-6">
+          <Reveal className="mb-6">
             <div className="w-20 h-20 mx-auto rounded-3xl bg-forest
                             flex items-center justify-center text-4xl
                             shadow-soft mb-6">
@@ -43,20 +42,28 @@ export function Download() {
                              uppercase text-forest mb-4">
               Get the App
             </span>
-          </div>
+          </Reveal>
 
-          <h2 className="reveal font-heading text-heading-xl md:text-display-lg
-                         text-[var(--text)] mb-4">
-            Start your family ritual tomorrow morning.
-          </h2>
+          <Reveal delay={0.1}>
+            <h2 className="font-heading text-heading-xl md:text-display-lg
+                           text-[var(--text)] mb-4">
+              Start your family ritual tomorrow morning.
+            </h2>
+          </Reveal>
 
-          <p className="reveal font-body text-body-lg text-[var(--text-light)] mb-10">
-            Download MindBodyRitual free. No subscription required to get started.
-            Available on iOS and Android.
-          </p>
+          <Reveal delay={0.18}>
+            <p className="font-body text-body-lg text-[var(--text-light)] mb-10">
+              Download MindBodyRitual free. No subscription required to get started.
+              Available on iOS and Android.
+            </p>
+          </Reveal>
 
           {/* App store buttons */}
-          <div className="reveal flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+          <RevealStagger
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
+            stagger={0.12}
+            delay={0.2}
+          >
             {/* App Store */}
             <a
               href="#"
@@ -92,10 +99,10 @@ export function Download() {
                 <div className="font-body font-semibold text-sm leading-tight">Google Play</div>
               </div>
             </a>
-          </div>
+          </RevealStagger>
 
           {/* Email waitlist */}
-          <div className="reveal max-w-md mx-auto">
+          <Reveal delay={0.3} className="max-w-md mx-auto">
             <p className="font-body text-sm text-[var(--text-light)] mb-4">
               Or join the early access list — we'll email you when your region goes live.
             </p>
@@ -130,7 +137,7 @@ export function Download() {
                 </Button>
               </form>
             )}
-          </div>
+          </Reveal>
 
         </div>
       </div>
