@@ -52,31 +52,22 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-cream pt-20 pb-16">
 
-      {/* ── LAYER 0: Hero background image (swap URL in content.ts) ─ */}
+      {/* ── LAYER 0: Hero background video — loops silently, no controls ─ */}
+      {/* To swap: replace /videos/hero-video-bg.mp4 in the public/videos folder */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden>
-        {heroContent.backgroundImage ? (
-          /* Real image — covers section, stays centered at any size */
-          <img
-            src={heroContent.backgroundImage}
-            alt=""
-            className="w-full h-full object-cover object-center"
-          />
-        ) : (
-          /* Placeholder — shows a dashed outline so you know exactly where the image will sit */
-          <div className="w-full h-full flex items-center justify-center"
-               style={{
-                 background: 'linear-gradient(135deg, #e8f0e9 0%, #f5f3ea 50%, #eef2ec 100%)',
-                 border: '2px dashed rgba(61,107,79,0.2)',
-               }}>
-            <span className="font-body text-xs text-forest/30 tracking-widest uppercase select-none">
-              Hero background image — set URL in src/content.ts → hero.backgroundImage
-            </span>
-          </div>
-        )}
+        <video
+          src="/videos/hero-video-bg.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{ pointerEvents: 'none' }}
+        />
 
-        {/* Soft cream overlay — keeps text readable over any photo */}
+        {/* Soft cream overlay — keeps text readable over the video */}
         <div className="absolute inset-0"
-             style={{ background: 'linear-gradient(to right, rgba(250,249,242,0.82) 40%, rgba(250,249,242,0.45) 100%)' }} />
+             style={{ background: 'linear-gradient(to right, rgba(250,249,242,0.80) 38%, rgba(250,249,242,0.35) 100%)' }} />
       </div>
 
       {/* ── LAYER 1: Ambient breathing orbs (on top of photo, under content) ── */}
