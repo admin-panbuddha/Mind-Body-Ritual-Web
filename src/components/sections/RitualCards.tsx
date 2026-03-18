@@ -327,8 +327,8 @@ export function RitualCards() {
           No fixed pixel/vh height — scales naturally with browser resize.
         */}
         <div
-          className="sticky top-0 overflow-hidden"
-          style={{ width: '100%', maxWidth: '100vw', aspectRatio: '16 / 9' }}
+          className="sticky top-0 w-full overflow-hidden"
+          style={{ aspectRatio: '16 / 9' }}
         >
 
           {/* ── LAYER 0: Full-width background video ─────────────────── */}

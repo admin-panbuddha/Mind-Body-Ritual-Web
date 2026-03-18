@@ -33,6 +33,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* prevent any section from causing horizontal page scroll */
 }
 
 body {
@@ -40,6 +41,8 @@ body {
   color: var(--text);
   font-family: var(--font-raleway), system-ui, sans-serif;
   line-height: 1.6;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* ── Headings ───────────────────────────────────────────────────── */
