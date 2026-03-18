@@ -17,48 +17,27 @@ import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
 import { Icon } from '@/components/ui/Icon'
 import { ritualCards } from '@/content'
 
-// ── Animated circular clock — synced to total ritual minutes ─────
+// ── Minimal progress-ring clock — no hands, just ring + number ───
 function ClockVisual({ totalMinutes, maxMinutes = 25 }: { totalMinutes: number; maxMinutes?: number }) {
-  const SIZE   = 200
-  const CX     = SIZE / 2
-  const CY     = SIZE / 2
-  const RADIUS = 80
-
-  const circumference  = 2 * Math.PI * RADIUS
-  const fraction       = Math.min(totalMinutes / maxMinutes, 1)
-  const dashOffset     = circumference * (1 - fraction)
-
-  // Clock hands: map total minutes onto a 12-hour face
-  const minuteAngle = (totalMinutes / 60) * 360   // 0-25 min → 0-150°
-  const hourAngle   = (totalMinutes / 720) * 360  // barely moves — adds subtlety
-
-  // Hour marker dots around the ring
-  const markers = Array.from({ length: 12 }, (_, i) => {
-    const angle = (i / 12) * 2 * Math.PI - Math.PI / 2
-    const inner = i % 3 === 0 ? 68 : 71
-    const outer = 76
-    return {
-      x1: CX + inner * Math.cos(angle),
-      y1: CY + inner * Math.sin(angle),
-      x2: CX + outer * Math.cos(angle),
-      y2: CY + outer * Math.sin(angle),
-      bold: i % 3 === 0,
-    }
-  })
+  const SIZE        = 200
+  const CX          = SIZE / 2
+  const CY          = SIZE / 2
+  const R_OUTER     = 86   // outer ring
+  const R_INNER     = 74   // inner ring (creates band thickness)
+  const circumference = 2 * Math.PI * R_OUTER
+  const fraction    = Math.min(totalMinutes / maxMinutes, 1)
+  const dashOffset  = circumference * (1 - fraction)
 
   return (
     <div
       className="pointer-events-none select-none"
       style={{
         position: 'absolute',
-        bottom: '4%',
-        right: '2%',
-        width: 'clamp(130px, 22%, 210px)',
+        bottom: '3%',
+        right: '1.5%',
+        width: 'clamp(140px, 24%, 220px)',
         aspectRatio: '1',
         zIndex: 2,
-        // soft radial glow behind the clock
-        filter: 'drop-shadow(0 0 18px rgba(61,107,79,0.15))',
-        opacity: 0.72,
       }}
     >
       <svg
@@ -67,84 +46,62 @@ function ClockVisual({ totalMinutes, maxMinutes = 25 }: { totalMinutes: number; 
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Glass-ish background disc */}
-        <circle cx={CX} cy={CY} r={RADIUS + 8} fill="#FAF9F2" fillOpacity="0.18" />
-
-        {/* Track ring */}
+        {/* Frosted glass disc background */}
         <circle
-          cx={CX} cy={CY} r={RADIUS}
-          stroke="#3D6B4F" strokeWidth="2.5" strokeOpacity="0.12"
+          cx={CX} cy={CY} r={R_OUTER + 4}
+          fill="#FAF9F2" fillOpacity="0.22"
         />
 
-        {/* Animated progress arc — fills clockwise from 12 o'clock */}
+        {/* Outer track ring */}
+        <circle
+          cx={CX} cy={CY} r={R_OUTER}
+          stroke="#3D6B4F" strokeWidth="10" strokeOpacity="0.10"
+        />
+
+        {/* Inner track ring — creates the band effect */}
+        <circle
+          cx={CX} cy={CY} r={R_INNER}
+          stroke="#3D6B4F" strokeWidth="1" strokeOpacity="0.06"
+        />
+
+        {/* Animated progress band — fills clockwise from 12 o'clock */}
         <motion.circle
-          cx={CX} cy={CY} r={RADIUS}
-          stroke="#3D6B4F" strokeWidth="5"
+          cx={CX} cy={CY} r={R_OUTER}
+          stroke="#3D6B4F"
+          strokeWidth="10"
           strokeLinecap="round"
           strokeDasharray={circumference}
           animate={{ strokeDashoffset: dashOffset }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           transform={`rotate(-90, ${CX}, ${CY})`}
-          strokeOpacity="0.55"
+          strokeOpacity="0.52"
         />
 
-        {/* Hour markers */}
-        {markers.map((m, i) => (
-          <line
-            key={i}
-            x1={m.x1} y1={m.y1} x2={m.x2} y2={m.y2}
-            stroke="#3D6B4F"
-            strokeWidth={m.bold ? 2 : 1}
-            strokeOpacity={m.bold ? 0.3 : 0.16}
-            strokeLinecap="round"
-          />
-        ))}
+        {/* Small dot at 12 o'clock */}
+        <circle cx={CX} cy={CY - R_OUTER} r="3" fill="#3D6B4F" fillOpacity="0.25" />
 
-        {/* Hour hand */}
-        <motion.line
-          x1={CX} y1={CY}
-          x2={CX} y2={CY - 30}
-          stroke="#3D6B4F" strokeWidth="3" strokeLinecap="round" strokeOpacity="0.4"
-          animate={{ rotate: hourAngle }}
-          style={{ transformBox: 'fill-box', transformOrigin: `${CX}px ${CY}px` }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          transform={`rotate(${hourAngle}, ${CX}, ${CY})`}
-        />
-
-        {/* Minute hand */}
-        <motion.line
-          x1={CX} y1={CY}
-          x2={CX} y2={CY - 50}
-          stroke="#3D6B4F" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.5"
-          animate={{ rotate: minuteAngle }}
-          style={{ transformBox: 'fill-box', transformOrigin: `${CX}px ${CY}px` }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          transform={`rotate(${minuteAngle}, ${CX}, ${CY})`}
-        />
-
-        {/* Centre pivot dot */}
-        <circle cx={CX} cy={CY} r={4} fill="#3D6B4F" fillOpacity="0.45" />
-
-        {/* Total minutes number */}
-        <text
-          x={CX} y={CY - 8}
+        {/* Total minutes — large centred number */}
+        <motion.text
+          x={CX} y={CY - 6}
           textAnchor="middle" dominantBaseline="middle"
-          fill="#3D6B4F" fillOpacity="0.55"
-          fontSize="30" fontWeight="700"
-          fontFamily="Georgia, serif"
+          fill="#3D6B4F"
+          fontSize="36" fontWeight="700"
+          fontFamily="Georgia, 'Times New Roman', serif"
           letterSpacing="-1"
+          animate={{ fillOpacity: totalMinutes === 0 ? 0.25 : 0.6 }}
+          transition={{ duration: 0.4 }}
         >
           {totalMinutes}
-        </text>
+        </motion.text>
 
-        {/* "min" label */}
+        {/* "min" sub-label */}
         <text
-          x={CX} y={CY + 20}
+          x={CX} y={CY + 22}
           textAnchor="middle" dominantBaseline="middle"
-          fill="#3D6B4F" fillOpacity="0.35"
-          fontSize="10" fontWeight="500"
-          fontFamily="system-ui, sans-serif"
-          letterSpacing="2"
+          fill="#3D6B4F" fillOpacity="0.32"
+          fontSize="11" fontWeight="500"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          letterSpacing="3"
         >
           MIN
         </text>
@@ -401,7 +358,7 @@ function RitualSlider({
 export function RitualCards() {
   const shouldReduce = useReducedMotion()
 
-  const [minutesPerRitual, setMinutesPerRitual] = useState(5)
+  const [minutesPerRitual, setMinutesPerRitual] = useState(3) // default: middle → 15 min total
   const [hoveredStep, setHoveredStep]           = useState(0) // default: first step emphasized
 
   return (
@@ -494,20 +451,45 @@ export function RitualCards() {
           </div>
 
           {/*
-            ── LAYER 2: CTA — always visible, premium gradient + hover lift ──
-            Positioned lower (bottom-[5%]) for breathing room from the ritual list.
+            ── LAYER 2: CTA — bottom-LEFT, larger, with bouncing down arrow ──
           */}
           <div
-            style={{ zIndex: 2 }}
-            className="absolute bottom-[5%] left-0 right-0 text-center pointer-events-none"
+            style={{ zIndex: 3 }}
+            className="absolute bottom-[6%] left-[4%] pointer-events-none"
           >
             <a
               href="#download"
-              className="ritual-cta inline-flex items-center gap-2.5 rounded-full px-7 py-3
-                         font-body text-sm font-semibold text-white pointer-events-auto"
+              className="ritual-cta inline-flex items-center gap-3 rounded-2xl
+                         font-body font-semibold text-white pointer-events-auto group"
+              style={{ padding: '14px 26px' }}
             >
-              {ritualCards.cta}
-              <span className="text-white/60 text-base leading-none">→</span>
+              {/* Lotus / flow SVG icon — scales on button hover via CSS */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="20" height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="ritual-cta-icon text-white/80 shrink-0"
+                aria-hidden
+              >
+                {/* Lotus / bloom: 3 petals suggesting opening/starting */}
+                <path d="M12 22 C12 22 5 17 5 11 C5 7.5 8 5 12 5 C16 5 19 7.5 19 11 C19 17 12 22 12 22Z" />
+                <path d="M12 5 C12 5 7 2 4 5 C2 7 3 10 5 11" />
+                <path d="M12 5 C12 5 17 2 20 5 C22 7 21 10 19 11" />
+                <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+              </svg>
+
+              <div className="flex flex-col items-start gap-0.5">
+                <span className="text-[15px] leading-tight tracking-wide">Start your ritual</span>
+                {/* Subtle subtitle */}
+                <span className="text-[10px] text-white/55 font-normal tracking-wider uppercase leading-none">
+                  5 rituals · {minutesPerRitual} min each
+                </span>
+              </div>
             </a>
           </div>
 
@@ -517,18 +499,30 @@ export function RitualCards() {
       {/* CTA styles — defined outside the aspect-ratio container to avoid scope issues */}
       <style>{`
         .ritual-cta {
-          background: linear-gradient(135deg, #3D6B4F 0%, #4d7f60 50%, #2e5640 100%);
-          box-shadow: 0 4px 22px rgba(61,107,79,0.38), 0 1px 4px rgba(0,0,0,0.14);
-          transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+          background: linear-gradient(145deg, #4a7a5c 0%, #3D6B4F 40%, #2e5640 100%);
+          box-shadow:
+            0 6px 28px rgba(61,107,79,0.42),
+            0 2px 6px rgba(0,0,0,0.16),
+            inset 0 1px 0 rgba(255,255,255,0.12);
+          transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
         }
         .ritual-cta:hover {
-          transform: translateY(-2px) scale(1.04);
-          box-shadow: 0 10px 32px rgba(61,107,79,0.48), 0 2px 8px rgba(0,0,0,0.16);
-          filter: brightness(1.06);
+          transform: translateY(-3px) scale(1.03);
+          box-shadow:
+            0 12px 36px rgba(61,107,79,0.50),
+            0 4px 10px rgba(0,0,0,0.18),
+            inset 0 1px 0 rgba(255,255,255,0.15);
+          filter: brightness(1.07);
         }
         .ritual-cta:active {
           transform: translateY(1px) scale(0.98);
-          box-shadow: 0 3px 12px rgba(61,107,79,0.28);
+          box-shadow: 0 3px 14px rgba(61,107,79,0.30);
+        }
+        .ritual-cta-icon {
+          transition: transform 0.25s ease;
+        }
+        .ritual-cta:hover .ritual-cta-icon {
+          transform: scale(1.2) rotate(15deg);
         }
       `}</style>
 
