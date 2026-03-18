@@ -294,7 +294,7 @@ export function RitualCards() {
   const ctaOpacity = useTransform(scrollYProgress, [0.72, 0.80], [0, 1])
 
   return (
-    <section id="rituals" className="bg-cream">
+    <section id="rituals" className="bg-cream overflow-hidden">
 
       {/* Header — scrolls normally above the sticky zone */}
       <div className="section-py pb-0">
@@ -319,7 +319,7 @@ export function RitualCards() {
         activeRange = 0.75 means all rituals complete at 75% of scroll;
         remaining 25% keeps the last step visible before sticky releases.
       */}
-      <div ref={ref} className="relative" style={{ height: `${(rituals.length + 4) * 100}vh` }}>
+      <div ref={ref} className="relative overflow-hidden" style={{ height: `${(rituals.length + 4) * 100}vh` }}>
 
         {/*
           ── STICKY PANEL ────────────────────────────────────────────────
@@ -327,8 +327,8 @@ export function RitualCards() {
           No fixed pixel/vh height — scales naturally with browser resize.
         */}
         <div
-          className="sticky top-0 w-full overflow-hidden"
-          style={{ aspectRatio: '16 / 9' }}
+          className="sticky top-0 overflow-hidden"
+          style={{ width: '100%', maxWidth: '100vw', aspectRatio: '16 / 9' }}
         >
 
           {/* ── LAYER 0: Full-width background video ─────────────────── */}
