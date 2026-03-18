@@ -35,7 +35,7 @@ export const hero = {
   // Swap this URL with your IONOS-hosted image when ready.
   // e.g. "https://mindbodyritual.ca/media/hero-background.jpg"
   // Leave as "" to show the placeholder gradient.
-  backgroundImage: "",
+  backgroundImage: "/images/hero-bg.jpg",
 
   badge:          "Free during Early Access",
   headlineLine1:  "25 minutes.",
