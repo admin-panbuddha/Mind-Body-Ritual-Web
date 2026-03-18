@@ -10,6 +10,7 @@
  * • CLS-safe: only opacity + transform animated, no layout properties
  */
 
+import { useRef, useEffect } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
@@ -32,6 +33,18 @@ function Badge({ children }: { children: React.ReactNode }) {
 
 export function Hero() {
   const shouldReduce = useReducedMotion()
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  // Force autoplay after hydration — React SSR doesn't reliably trigger
+  // the autoPlay attribute, so we call .play() directly after mount
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    v.muted = true
+    v.play().catch(() => {
+      // Browser blocked autoplay — video stays as static poster, which is fine
+    })
+  }, [])
 
   // Choose wrapper: motion.div for animated, plain div for reduced motion
   const Container = shouldReduce ? 'div' : motion.div
@@ -56,11 +69,13 @@ export function Hero() {
       {/* To swap: replace /videos/hero-video-bg.mp4 in the public/videos folder */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden>
         <video
+          ref={videoRef}
           src="/videos/hero-video-bg.mp4"
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
           className="absolute inset-0 w-full h-full object-cover object-center"
           style={{ pointerEvents: 'none' }}
         />
