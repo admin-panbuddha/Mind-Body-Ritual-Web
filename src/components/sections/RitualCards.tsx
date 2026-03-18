@@ -17,6 +17,142 @@ import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
 import { Icon } from '@/components/ui/Icon'
 import { ritualCards } from '@/content'
 
+// ── Animated circular clock — synced to total ritual minutes ─────
+function ClockVisual({ totalMinutes, maxMinutes = 25 }: { totalMinutes: number; maxMinutes?: number }) {
+  const SIZE   = 200
+  const CX     = SIZE / 2
+  const CY     = SIZE / 2
+  const RADIUS = 80
+
+  const circumference  = 2 * Math.PI * RADIUS
+  const fraction       = Math.min(totalMinutes / maxMinutes, 1)
+  const dashOffset     = circumference * (1 - fraction)
+
+  // Clock hands: map total minutes onto a 12-hour face
+  const minuteAngle = (totalMinutes / 60) * 360   // 0-25 min → 0-150°
+  const hourAngle   = (totalMinutes / 720) * 360  // barely moves — adds subtlety
+
+  // Hour marker dots around the ring
+  const markers = Array.from({ length: 12 }, (_, i) => {
+    const angle = (i / 12) * 2 * Math.PI - Math.PI / 2
+    const inner = i % 3 === 0 ? 68 : 71
+    const outer = 76
+    return {
+      x1: CX + inner * Math.cos(angle),
+      y1: CY + inner * Math.sin(angle),
+      x2: CX + outer * Math.cos(angle),
+      y2: CY + outer * Math.sin(angle),
+      bold: i % 3 === 0,
+    }
+  })
+
+  return (
+    <div
+      className="pointer-events-none select-none"
+      style={{
+        position: 'absolute',
+        bottom: '4%',
+        right: '2%',
+        width: 'clamp(130px, 22%, 210px)',
+        aspectRatio: '1',
+        zIndex: 2,
+        // soft radial glow behind the clock
+        filter: 'drop-shadow(0 0 18px rgba(61,107,79,0.15))',
+        opacity: 0.72,
+      }}
+    >
+      <svg
+        viewBox={`0 0 ${SIZE} ${SIZE}`}
+        width="100%" height="100%"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Glass-ish background disc */}
+        <circle cx={CX} cy={CY} r={RADIUS + 8} fill="#FAF9F2" fillOpacity="0.18" />
+
+        {/* Track ring */}
+        <circle
+          cx={CX} cy={CY} r={RADIUS}
+          stroke="#3D6B4F" strokeWidth="2.5" strokeOpacity="0.12"
+        />
+
+        {/* Animated progress arc — fills clockwise from 12 o'clock */}
+        <motion.circle
+          cx={CX} cy={CY} r={RADIUS}
+          stroke="#3D6B4F" strokeWidth="5"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          animate={{ strokeDashoffset: dashOffset }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transform={`rotate(-90, ${CX}, ${CY})`}
+          strokeOpacity="0.55"
+        />
+
+        {/* Hour markers */}
+        {markers.map((m, i) => (
+          <line
+            key={i}
+            x1={m.x1} y1={m.y1} x2={m.x2} y2={m.y2}
+            stroke="#3D6B4F"
+            strokeWidth={m.bold ? 2 : 1}
+            strokeOpacity={m.bold ? 0.3 : 0.16}
+            strokeLinecap="round"
+          />
+        ))}
+
+        {/* Hour hand */}
+        <motion.line
+          x1={CX} y1={CY}
+          x2={CX} y2={CY - 30}
+          stroke="#3D6B4F" strokeWidth="3" strokeLinecap="round" strokeOpacity="0.4"
+          animate={{ rotate: hourAngle }}
+          style={{ transformBox: 'fill-box', transformOrigin: `${CX}px ${CY}px` }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transform={`rotate(${hourAngle}, ${CX}, ${CY})`}
+        />
+
+        {/* Minute hand */}
+        <motion.line
+          x1={CX} y1={CY}
+          x2={CX} y2={CY - 50}
+          stroke="#3D6B4F" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.5"
+          animate={{ rotate: minuteAngle }}
+          style={{ transformBox: 'fill-box', transformOrigin: `${CX}px ${CY}px` }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transform={`rotate(${minuteAngle}, ${CX}, ${CY})`}
+        />
+
+        {/* Centre pivot dot */}
+        <circle cx={CX} cy={CY} r={4} fill="#3D6B4F" fillOpacity="0.45" />
+
+        {/* Total minutes number */}
+        <text
+          x={CX} y={CY - 8}
+          textAnchor="middle" dominantBaseline="middle"
+          fill="#3D6B4F" fillOpacity="0.55"
+          fontSize="30" fontWeight="700"
+          fontFamily="Georgia, serif"
+          letterSpacing="-1"
+        >
+          {totalMinutes}
+        </text>
+
+        {/* "min" label */}
+        <text
+          x={CX} y={CY + 20}
+          textAnchor="middle" dominantBaseline="middle"
+          fill="#3D6B4F" fillOpacity="0.35"
+          fontSize="10" fontWeight="500"
+          fontFamily="system-ui, sans-serif"
+          letterSpacing="2"
+        >
+          MIN
+        </text>
+      </svg>
+    </div>
+  )
+}
+
 // ─── IONOS video source ──────────────────────────────────────────
 // Note: the folder name on IONOS is literally "/-videos/" (dash is intentional).
 const RITUAL_VIDEO_SRC = 'https://mindbodyritual.ca/-videos/website-center-page.mp4'
@@ -93,8 +229,11 @@ function RitualStep({
               {ritual.title}
             </h3>
           </div>
-          <span className="font-body text-[10px] font-medium text-forest
-                           bg-white/70 rounded-full px-2.5 py-0.5 border border-forest/20 tabular-nums shrink-0">
+          <span
+            className="font-body text-[13px] font-semibold text-forest tabular-nums shrink-0
+                       bg-white/80 rounded-full border border-forest/25 leading-none"
+            style={{ padding: '5px 10px', boxShadow: '0 1px 4px rgba(61,107,79,0.10)' }}
+          >
             {minutesPerRitual} min
           </span>
         </div>
@@ -268,8 +407,8 @@ export function RitualCards() {
   return (
     <section id="rituals" className="bg-cream" style={{ overflowX: 'clip' }}>
 
-      {/* Header — reduced bottom padding to pull panel closer */}
-      <div className="section-py pb-4">
+      {/* Header — minimal bottom padding to pull panel tight to slider */}
+      <div className="section-py" style={{ paddingBottom: '0.5rem' }}>
         <div className="container-wide text-center max-w-2xl mx-auto">
           <span className="inline-block font-body text-xs font-semibold tracking-widest uppercase text-forest mb-4">
             {ritualCards.sectionLabel}
@@ -286,8 +425,8 @@ export function RitualCards() {
         </div>
       </div>
 
-      {/* Video + Ritual Steps Panel */}
-      <div className="container-wide pb-12" style={{ paddingInline: 0 }}>
+      {/* Video + Ritual Steps Panel — no top gap, tight to slider */}
+      <div className="container-wide pb-10" style={{ paddingInline: 0, marginTop: 0 }}>
         <div
           className="relative w-full overflow-hidden rounded-2xl"
           style={{ aspectRatio: '16 / 9' }}
@@ -328,13 +467,16 @@ export function RitualCards() {
             style={{ zIndex: 1, height: '10%', background: `linear-gradient(to top, ${CREAM}, transparent)` }}
           />
 
+          {/* ── LAYER 2: Animated clock — bottom-right, synced to slider ── */}
+          <ClockVisual totalMinutes={5 * minutesPerRitual} maxMinutes={25} />
+
           {/*
             ── LAYER 2: Ritual steps — hover interaction ────────────────
             justify-between spreads all 5 steps evenly across the panel height.
             onMouseLeave resets to first step so there is always an active state.
           */}
           <div
-            className="absolute inset-y-0 left-0 flex flex-col justify-between px-[4%] py-[9%]"
+            className="absolute inset-y-0 left-0 flex flex-col justify-between px-[4%] py-[7%]"
             style={{ zIndex: 2, width: 'clamp(300px, 58%, 700px)' }}
             onMouseLeave={() => setHoveredStep(0)}
           >
