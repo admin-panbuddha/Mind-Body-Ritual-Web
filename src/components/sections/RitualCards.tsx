@@ -1,24 +1,18 @@
 'use client'
 
 /**
- * RitualCards — Step-by-Step Scroll Capture
+ * RitualCards — Hover-Based Step Expansion
  * ──────────────────────────────────────────────────────────────────
  * Interaction model:
- *   • When this section enters the viewport, page scroll is intercepted.
- *   • Each scroll tick advances one ritual step (1 → 5).
- *   • After the final step, scroll capture releases and the page continues normally.
- *   • Scrolling back up re-enters the section and reverses through steps.
- *   • Slider moves smoothly (step=0.1); minute display rounds to nearest integer.
- *   • prefers-reduced-motion: scroll capture is skipped, all 5 steps shown at once.
- *
- * Scroll capture technique:
- *   • window 'wheel' listener with passive:false so we can call e.preventDefault().
- *   • deltaY accumulator handles trackpad (low per-event deltaY) and mouse wheel.
- *   • 480ms cooldown between step advances to prevent overshoot.
- *   • IntersectionObserver (threshold 0.45) activates/deactivates capture.
+ *   • Hovering a ritual step expands it: full opacity, description slides in, icon pulses.
+ *   • Non-hovered steps fade to low opacity and scale down slightly.
+ *   • Default state: first step is emphasized on load.
+ *   • Slider: 0 → 5 min, integer steps (1,2,3,4,5), no tick labels.
+ *   • CTA: always visible, premium gradient, hover-lift animation.
+ *   • prefers-reduced-motion: all steps shown equally, no animations.
  */
 
-import { useRef, useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
 import { Icon } from '@/components/ui/Icon'
 import { ritualCards } from '@/content'
@@ -36,26 +30,27 @@ function RitualStep({
   ritual,
   index,
   isActive,
-  isPast,
   reduce,
   minutesPerRitual,
+  onHover,
 }: {
   ritual: typeof rituals[number]
   index: number
   isActive: boolean
-  isPast: boolean
   reduce: boolean | null
   minutesPerRitual: number
+  onHover: () => void
 }) {
   return (
     <motion.div
+      onMouseEnter={onHover}
       animate={reduce ? {} : {
-        opacity: isActive ? 1 : isPast ? 0.55 : 0.2,
-        scale: isActive ? 1.03 : 1,
+        opacity: isActive ? 1 : 0.28,
+        scale:   isActive ? 1.02 : 0.97,
       }}
       initial={false}
-      transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-      className="relative last:pb-0"
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      className="relative cursor-default select-none"
       style={{ transformOrigin: 'left center' }}
     >
       {/* Vertical connector line */}
@@ -63,23 +58,24 @@ function RitualStep({
         className="absolute left-[22px] top-11 bottom-0 w-[2px] rounded-full"
         aria-hidden
         style={{
-          backgroundColor: `${ritual.accentHex}${isPast || isActive ? '60' : '30'}`,
+          backgroundColor: `${ritual.accentHex}${isActive ? '55' : '22'}`,
           display: index === rituals.length - 1 ? 'none' : 'block',
+          transition: 'background-color 0.22s ease',
         }}
       />
 
       {/* Icon + title row */}
       <div className="flex items-center gap-3">
         <motion.div
-          animate={reduce || !isActive ? {} : {
-            scale: [1, 1.12, 1],
-            opacity: [0.85, 1, 0.85],
-          }}
-          transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+          animate={reduce || !isActive
+            ? { scale: 1, opacity: 1 }
+            : { scale: [1, 1.10, 1], opacity: [0.85, 1, 0.85] }}
+          transition={{ duration: 2.6, repeat: isActive ? Infinity : 0, ease: 'easeInOut' }}
           className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
           style={{
-            backgroundColor: `${ritual.accentHex}20`,
-            border: `1.5px solid ${ritual.accentHex}40`,
+            backgroundColor: `${ritual.accentHex}${isActive ? '22' : '10'}`,
+            border: `1.5px solid ${ritual.accentHex}${isActive ? '50' : '22'}`,
+            transition: 'background-color 0.22s ease, border-color 0.22s ease',
           }}
         >
           <Icon name={ritual.icon} size={20} />
@@ -99,20 +95,20 @@ function RitualStep({
           </div>
           <span className="font-body text-[10px] font-medium text-forest
                            bg-white/70 rounded-full px-2.5 py-0.5 border border-forest/20 tabular-nums shrink-0">
-            {Math.round(minutesPerRitual)} min
+            {minutesPerRitual} min
           </span>
         </div>
       </div>
 
-      {/* Description — slides in when active */}
+      {/* Description + tags — expands on hover, collapses off hover */}
       <AnimatePresence initial={false}>
         {(isActive || reduce) && (
           <motion.div
             key="desc"
-            initial={{ opacity: 0, height: 0, y: 8 }}
+            initial={{ opacity: 0, height: 0, y: 6 }}
             animate={{ opacity: 1, height: 'auto', y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -6 }}
-            transition={{ duration: 0.32, ease: 'easeOut' }}
+            exit={{ opacity: 0, height: 0, y: -4 }}
+            transition={{ duration: 0.26, ease: 'easeOut' }}
             className="overflow-hidden pl-[52px]"
           >
             <p className="font-body text-xs text-[var(--text-light)] leading-relaxed pt-1">
@@ -150,24 +146,28 @@ function AnimatedNumber({ value }: { value: number }) {
   }
 
   return (
-    <span className="inline-block tabular-nums transition-all duration-[180ms] ease-out"
-          style={{ opacity: animating ? 0.6 : 1, transform: animating ? `translateY(${value > prev ? '-3px' : '3px'})` : 'translateY(0)' }}>
+    <span
+      className="inline-block tabular-nums transition-all duration-[180ms] ease-out"
+      style={{
+        opacity:   animating ? 0.6 : 1,
+        transform: animating ? `translateY(${value > prev ? '-3px' : '3px'})` : 'translateY(0)',
+      }}
+    >
       {display}
     </span>
   )
 }
 
-// ── Minutes slider ────────────────────────────────────────────────
+// ── Minutes slider — range 0→5, step 1, no tick labels ────────────
 function RitualSlider({
   minutesPerRitual, setMinutesPerRitual,
 }: {
   minutesPerRitual: number
   setMinutesPerRitual: (v: number) => void
 }) {
-  const ritualCount    = 5
-  const displayMinutes = Math.round(minutesPerRitual)
-  const totalMinutes   = ritualCount * displayMinutes
-  const fillPct        = (minutesPerRitual / 15) * 100
+  const ritualCount  = 5
+  const totalMinutes = ritualCount * minutesPerRitual
+  const fillPct      = (minutesPerRitual / 5) * 100
 
   return (
     <div className="flex flex-col items-center gap-5 w-full">
@@ -179,6 +179,7 @@ function RitualSlider({
         </p>
       </div>
 
+      {/* Live readout pill */}
       <div className="inline-flex items-center gap-2.5 bg-forest/[0.07] rounded-full px-5 py-2.5 border border-forest/[0.12]">
         <Icon name="ui_Icon_Clock" size={16} className="shrink-0" />
         <span className="font-body text-sm font-semibold text-forest">
@@ -186,42 +187,26 @@ function RitualSlider({
         </span>
         <span className="w-px h-4 bg-forest/20 shrink-0" />
         <span className="font-body text-sm text-[var(--text-muted)]">
-          {ritualCount} rituals × <AnimatedNumber value={displayMinutes} /> min
+          {ritualCount} rituals × <AnimatedNumber value={minutesPerRitual} /> min
         </span>
       </div>
 
+      {/* Slider — 0 to 5, integer steps, no tick labels underneath */}
       <div className="w-full max-w-xs">
         <div className="flex items-center gap-3">
           <span className="font-body text-xs text-[var(--text-muted)] tabular-nums w-4 text-right shrink-0 select-none">0</span>
           <div className="relative flex-1 flex items-center h-8">
-            {/* step={0.1} — smooth continuous drag; display rounds to integer */}
             <input
-              type="range" min={0} max={15} step={0.1}
+              type="range" min={0} max={5} step={1}
               value={minutesPerRitual}
               onChange={(e) => setMinutesPerRitual(Number(e.target.value))}
               aria-label="Minutes per ritual"
               className="ritual-slider w-full"
             />
           </div>
-          <span className="font-body text-xs text-[var(--text-muted)] tabular-nums w-5 shrink-0 select-none">15</span>
+          <span className="font-body text-xs text-[var(--text-muted)] tabular-nums w-4 shrink-0 select-none">5</span>
         </div>
-
-        <div className="relative h-5 mt-1 mx-7" aria-hidden>
-          {[0, 5, 10, 15].map((mark) => {
-            const pct      = (mark / 15) * 100
-            const isActive = minutesPerRitual >= mark
-            return (
-              <div key={mark} className="absolute flex flex-col items-center -translate-x-1/2" style={{ left: `${pct}%` }}>
-                <div className="w-px h-2 rounded-full mb-0.5 transition-colors duration-150"
-                     style={{ backgroundColor: isActive ? '#3D6B4F' : '#C8C4B8' }} />
-                <span className="font-body text-[10px] tabular-nums leading-none transition-colors duration-150"
-                      style={{ color: isActive ? '#3D6B4F' : '#A8A49A' }}>
-                  {mark}
-                </span>
-              </div>
-            )
-          })}
-        </div>
+        {/* tick labels removed for clean minimal look */}
       </div>
 
       <style>{`
@@ -246,7 +231,7 @@ function RitualSlider({
           -webkit-appearance: none; appearance: none;
           height: 3px; border-radius: 9999px; outline: none; cursor: pointer;
           background: linear-gradient(to right, #3D6B4F 0%, #3D6B4F ${fillPct}%, #E2DFD5 ${fillPct}%, #E2DFD5 100%);
-          transition: background 0.08s linear;
+          transition: background 0.1s linear;
         }
         .ritual-slider::-webkit-slider-thumb {
           -webkit-appearance: none; appearance: none;
@@ -275,109 +260,16 @@ function RitualSlider({
 
 // ── Main export ──────────────────────────────────────────────────
 export function RitualCards() {
-  const sectionRef   = useRef<HTMLElement>(null)
   const shouldReduce = useReducedMotion()
 
   const [minutesPerRitual, setMinutesPerRitual] = useState(5)
-  const [activeStep, setActiveStep]             = useState(0)
-  const [showCta, setShowCta]                   = useState(false)
-
-  // Refs for wheel handler — avoid stale closures
-  const activeStepRef    = useRef(0)
-  const isCapturingRef   = useRef(false)
-
-  useEffect(() => { activeStepRef.current = activeStep }, [activeStep])
-
-  // ── Scroll capture effect ────────────────────────────────────────
-  useEffect(() => {
-    if (shouldReduce) return
-    const section = sectionRef.current
-    if (!section) return
-
-    let acc      = 0    // accumulated deltaY across trackpad micro-events
-    let cooldown = false // guard — only one step advance per 480ms
-    const THRESHOLD   = 100  // deltaY units to trigger a step
-    const COOLDOWN_MS = 480  // ms between step advances
-
-    function advanceStep(dir: 1 | -1) {
-      if (cooldown) return
-      const next = activeStepRef.current + dir
-      if (next < 0 || next >= rituals.length) return
-
-      cooldown = true
-      acc = 0
-      activeStepRef.current = next
-      setActiveStep(next)
-      if (next === rituals.length - 1) setShowCta(true)
-      setTimeout(() => { cooldown = false }, COOLDOWN_MS)
-    }
-
-    function handleWheel(e: WheelEvent) {
-      if (!isCapturingRef.current) return
-
-      // Normalise: deltaMode 1 = lines (~40px each), 2 = pages (~800px)
-      const dy = e.deltaMode === 0 ? e.deltaY : e.deltaY * (e.deltaMode === 1 ? 40 : 800)
-
-      const current = activeStepRef.current
-
-      // Release capture at the boundaries so page scroll takes over
-      if (dy > 0 && current >= rituals.length - 1) {
-        isCapturingRef.current = false
-        return
-      }
-      if (dy < 0 && current <= 0) {
-        isCapturingRef.current = false
-        return
-      }
-
-      // We're inside the sequence — block page scroll
-      e.preventDefault()
-      acc += dy
-
-      if (acc >= THRESHOLD)  advanceStep(1)
-      else if (acc <= -THRESHOLD) advanceStep(-1)
-    }
-
-    // Activate capture when section is ≥45% visible
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          acc = 0
-          isCapturingRef.current = true
-
-          // Determine entry direction to set the right starting step
-          if (entry.boundingClientRect.top >= 0) {
-            // Entering from below (user scrolling down) — start at step 0
-            activeStepRef.current = 0
-            setActiveStep(0)
-            setShowCta(false)
-          } else {
-            // Entering from above (user scrolling back up) — start at last step
-            activeStepRef.current = rituals.length - 1
-            setActiveStep(rituals.length - 1)
-            setShowCta(true)
-          }
-        } else {
-          isCapturingRef.current = false
-        }
-      },
-      { threshold: 0.45 }
-    )
-
-    observer.observe(section)
-    window.addEventListener('wheel', handleWheel, { passive: false })
-
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('wheel', handleWheel)
-    }
-  }, [shouldReduce])
+  const [hoveredStep, setHoveredStep]           = useState(0) // default: first step emphasized
 
   return (
-    <section id="rituals" ref={sectionRef} className="bg-cream" style={{ overflowX: 'clip' }}>
+    <section id="rituals" className="bg-cream" style={{ overflowX: 'clip' }}>
 
-      {/* Header — scrolls normally above the panel */}
-      <div className="section-py pb-0">
+      {/* Header — reduced bottom padding to pull panel closer */}
+      <div className="section-py pb-4">
         <div className="container-wide text-center max-w-2xl mx-auto">
           <span className="inline-block font-body text-xs font-semibold tracking-widest uppercase text-forest mb-4">
             {ritualCards.sectionLabel}
@@ -394,26 +286,17 @@ export function RitualCards() {
         </div>
       </div>
 
-      {/*
-        Video + Ritual Steps Panel.
-        No sticky/tall-container needed — scroll capture via wheel events keeps the
-        section in view while cycling through steps. After the last step the page
-        scrolls normally and this section scrolls away.
-      */}
-      <div className="container-wide py-8" style={{ paddingInline: 0 }}>
+      {/* Video + Ritual Steps Panel */}
+      <div className="container-wide pb-12" style={{ paddingInline: 0 }}>
         <div
           className="relative w-full overflow-hidden rounded-2xl"
           style={{ aspectRatio: '16 / 9' }}
         >
 
-          {/* ── LAYER 0: Full-width background video ─────────────────── */}
+          {/* ── LAYER 0: Background video ─────────────────── */}
           <video
             src={RITUAL_VIDEO_SRC}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
+            autoPlay muted loop playsInline preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
             style={{ zIndex: 0 }}
           />
@@ -433,82 +316,79 @@ export function RitualCards() {
             }}
           />
 
-          {/* ── LAYER 1: Top blend into cream header ─────────────────── */}
+          {/* ── LAYER 1: Top blend ─────────────────── */}
           <div
             className="absolute top-0 left-0 right-0 pointer-events-none"
-            style={{
-              zIndex: 1,
-              height: '12%',
-              background: `linear-gradient(to bottom, ${CREAM}, transparent)`,
-            }}
+            style={{ zIndex: 1, height: '10%', background: `linear-gradient(to bottom, ${CREAM}, transparent)` }}
           />
 
-          {/* ── LAYER 1: Bottom blend into next section ──────────────── */}
+          {/* ── LAYER 1: Bottom blend ──────────────── */}
           <div
             className="absolute bottom-0 left-0 right-0 pointer-events-none"
-            style={{
-              zIndex: 1,
-              height: '12%',
-              background: `linear-gradient(to top, ${CREAM}, transparent)`,
-            }}
+            style={{ zIndex: 1, height: '10%', background: `linear-gradient(to top, ${CREAM}, transparent)` }}
           />
 
-          {/* ── LAYER 2: Progress bar — driven by activeStep ─────────── */}
-          <div className="absolute top-[7%] left-0 right-0 px-[4%]" style={{ zIndex: 2 }}>
-            <div className="relative h-[2px] bg-forest/15 rounded-full max-w-[42%] overflow-hidden">
-              <motion.div
-                animate={{ scaleX: shouldReduce ? 1 : (activeStep + 1) / rituals.length }}
-                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-                style={{ transformOrigin: 'left' }}
-                className="absolute inset-0 bg-forest/60 rounded-full"
-              />
-            </div>
-          </div>
-
-          {/* ── LAYER 2: Ritual steps — left panel ───────────────────── */}
+          {/*
+            ── LAYER 2: Ritual steps — hover interaction ────────────────
+            justify-between spreads all 5 steps evenly across the panel height.
+            onMouseLeave resets to first step so there is always an active state.
+          */}
           <div
-            className="absolute inset-y-0 left-0 flex flex-col justify-between px-[4%] pt-[14%] pb-[10%]"
+            className="absolute inset-y-0 left-0 flex flex-col justify-between px-[4%] py-[9%]"
             style={{ zIndex: 2, width: 'clamp(300px, 58%, 700px)' }}
+            onMouseLeave={() => setHoveredStep(0)}
           >
             {rituals.map((ritual, i) => (
               <RitualStep
                 key={ritual.title}
                 ritual={ritual}
                 index={i}
-                isActive={shouldReduce ? true : i === activeStep}
-                isPast={!shouldReduce && i < activeStep}
+                isActive={shouldReduce ? true : i === hoveredStep}
                 reduce={shouldReduce}
                 minutesPerRitual={minutesPerRitual}
+                onHover={() => setHoveredStep(i)}
               />
             ))}
           </div>
 
-          {/* ── LAYER 2: CTA — appears after all steps complete ──────── */}
-          <AnimatePresence>
-            {(showCta || shouldReduce) && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-                style={{ zIndex: 2 }}
-                className="absolute bottom-[8%] left-0 right-0 text-center pointer-events-none"
-              >
-                <a
-                  href="#download"
-                  className="inline-flex items-center gap-2 rounded-full px-5 py-2.5
-                             bg-forest text-white font-body text-sm font-semibold
-                             hover:bg-forest-deep transition-colors shadow-soft pointer-events-auto"
-                >
-                  🐼 {ritualCards.cta}
-                  <span className="text-white/60">→</span>
-                </a>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/*
+            ── LAYER 2: CTA — always visible, premium gradient + hover lift ──
+            Positioned lower (bottom-[5%]) for breathing room from the ritual list.
+          */}
+          <div
+            style={{ zIndex: 2 }}
+            className="absolute bottom-[5%] left-0 right-0 text-center pointer-events-none"
+          >
+            <a
+              href="#download"
+              className="ritual-cta inline-flex items-center gap-2.5 rounded-full px-7 py-3
+                         font-body text-sm font-semibold text-white pointer-events-auto"
+            >
+              {ritualCards.cta}
+              <span className="text-white/60 text-base leading-none">→</span>
+            </a>
+          </div>
 
         </div>
       </div>
+
+      {/* CTA styles — defined outside the aspect-ratio container to avoid scope issues */}
+      <style>{`
+        .ritual-cta {
+          background: linear-gradient(135deg, #3D6B4F 0%, #4d7f60 50%, #2e5640 100%);
+          box-shadow: 0 4px 22px rgba(61,107,79,0.38), 0 1px 4px rgba(0,0,0,0.14);
+          transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+        .ritual-cta:hover {
+          transform: translateY(-2px) scale(1.04);
+          box-shadow: 0 10px 32px rgba(61,107,79,0.48), 0 2px 8px rgba(0,0,0,0.16);
+          filter: brightness(1.06);
+        }
+        .ritual-cta:active {
+          transform: translateY(1px) scale(0.98);
+          box-shadow: 0 3px 12px rgba(61,107,79,0.28);
+        }
+      `}</style>
 
     </section>
   )
