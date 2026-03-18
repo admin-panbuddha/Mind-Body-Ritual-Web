@@ -1,23 +1,30 @@
 'use client'
 
 /**
- * RitualCards — Scroll-Driven Sticky Reveal
+ * RitualCards — Step-by-Step Scroll Capture
  * ──────────────────────────────────────────────────────────────────
- * Layout:
- *   • IONOS video fills 100% width as the background layer (z-index 0)
- *   • Sticky panel height = video's native 16:9 aspect ratio — scales with browser width
- *   • Ritual steps panel floats over the LEFT half of the video (z-index above video)
- *   • A left-to-right gradient makes the text area readable without hiding the video
- *   • No shadow, no border, no rounded corners — video blends into the page
- *   • Top + bottom cream gradients blend the video into the sections above/below
+ * Interaction model:
+ *   • When this section enters the viewport, page scroll is intercepted.
+ *   • Each scroll tick advances one ritual step (1 → 5).
+ *   • After the final step, scroll capture releases and the page continues normally.
+ *   • Scrolling back up re-enters the section and reverses through steps.
+ *   • Slider moves smoothly (step=0.1); minute display rounds to nearest integer.
+ *   • prefers-reduced-motion: scroll capture is skipped, all 5 steps shown at once.
+ *
+ * Scroll capture technique:
+ *   • window 'wheel' listener with passive:false so we can call e.preventDefault().
+ *   • deltaY accumulator handles trackpad (low per-event deltaY) and mouse wheel.
+ *   • 480ms cooldown between step advances to prevent overshoot.
+ *   • IntersectionObserver (threshold 0.45) activates/deactivates capture.
  */
 
-import { useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react'
+import { useRef, useState, useEffect } from 'react'
+import { motion, useReducedMotion, AnimatePresence } from 'motion/react'
 import { Icon } from '@/components/ui/Icon'
 import { ritualCards } from '@/content'
 
 // ─── IONOS video source ──────────────────────────────────────────
+// Note: the folder name on IONOS is literally "/-videos/" (dash is intentional).
 const RITUAL_VIDEO_SRC = 'https://mindbodyritual.ca/-videos/website-center-page.mp4'
 const CREAM = '#FAF9F2'
 // ────────────────────────────────────────────────────────────────
@@ -26,120 +33,105 @@ const rituals = ritualCards.rituals.map((r, i) => ({ ...r, step: i + 1 }))
 
 // ── Individual ritual step ───────────────────────────────────────
 function RitualStep({
-  ritual, index, total, progress, reduce, minutesPerRitual,
+  ritual,
+  index,
+  isActive,
+  isPast,
+  reduce,
+  minutesPerRitual,
 }: {
   ritual: typeof rituals[number]
   index: number
-  total: number
-  progress: ReturnType<typeof useScroll>['scrollYProgress']
+  isActive: boolean
+  isPast: boolean
   reduce: boolean | null
   minutesPerRitual: number
 }) {
-  const activeRange = 0.75
-  const sliceSize   = activeRange / total
-  const s   = index * sliceSize
-  const e   = (index + 1) * sliceSize
-  const mid = s + sliceSize * 0.5
-
-  const fadeIn  = Math.min(s + 0.03, mid)
-  const fadeOut = Math.max(e - 0.03, mid)
-
-  const opacity     = useTransform(progress, [s, fadeIn, mid, fadeOut, e], [0.22, 1, 1, 1, 0.22])
-  const descIn      = Math.min(s + 0.04, mid)
-  const descOut     = Math.max(e - 0.04, mid)
-  const descOpacity = useTransform(progress, [s, descIn, mid, descOut, e], [0, 1, 1, 1, 0])
-  const descY       = useTransform(progress, [s, descIn, descOut, e], [10, 0, 0, -10])
-  const tagIn       = Math.min(s + 0.05, mid)
-  const tagOut      = Math.max(e - 0.05, mid)
-  const tagOpacity  = useTransform(
-    progress,
-    [tagIn, Math.min(tagIn + 0.04, mid), Math.max(tagOut - 0.04, mid), tagOut],
-    [0, 1, 1, 0]
-  )
-  const barIn    = Math.min(s + 0.03, mid)
-  const barOut   = Math.max(e - 0.03, mid)
-  const barScale = useTransform(progress, [s, barIn, barOut, e], [0, 1, 1, 0])
-
-  // Whole-card scale: inactive cards sit at 0.94, active breathes up to 1.06
-  const cardScale = useTransform(
-    progress,
-    [s, fadeIn, mid, fadeOut, e],
-    [0.94, 1.04, 1.06, 1.04, 0.94]
-  )
-
-  // Description height: collapses to 0 when not active so no phantom spacing
-  const descMaxH = useTransform(
-    progress,
-    [s, descIn, descOut, e],
-    ['0px', '110px', '110px', '0px']
-  )
-
   return (
     <motion.div
-      style={reduce ? {} : {
-        opacity,
-        scale: cardScale,
-        transformOrigin: 'left center',
+      animate={reduce ? {} : {
+        opacity: isActive ? 1 : isPast ? 0.55 : 0.2,
+        scale: isActive ? 1.03 : 1,
       }}
+      initial={false}
+      transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
       className="relative last:pb-0"
+      style={{ transformOrigin: 'left center' }}
     >
-
       {/* Vertical connector line */}
-      <motion.div
-        style={reduce ? {} : { scaleY: barScale, transformOrigin: 'top' }}
-        className="absolute left-[22px] top-11 bottom-0 w-[2px] rounded-full last:hidden"
+      <div
+        className="absolute left-[22px] top-11 bottom-0 w-[2px] rounded-full"
         aria-hidden
-      >
-        <div className="w-full h-full" style={{ backgroundColor: `${ritual.accentHex}50` }} />
-      </motion.div>
+        style={{
+          backgroundColor: `${ritual.accentHex}${isPast || isActive ? '60' : '30'}`,
+          display: index === rituals.length - 1 ? 'none' : 'block',
+        }}
+      />
 
-      {/* Icon + title row — single compact line, no wrapping */}
+      {/* Icon + title row */}
       <div className="flex items-center gap-3">
         <motion.div
-          animate={reduce ? {} : { scale: [1, 1.10, 1], opacity: [0.85, 1, 0.85] }}
-          transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.6 }}
+          animate={reduce || !isActive ? {} : {
+            scale: [1, 1.12, 1],
+            opacity: [0.85, 1, 0.85],
+          }}
+          transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
           className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
-          style={{ backgroundColor: `${ritual.accentHex}20`, border: `1.5px solid ${ritual.accentHex}40` }}
+          style={{
+            backgroundColor: `${ritual.accentHex}20`,
+            border: `1.5px solid ${ritual.accentHex}40`,
+          }}
         >
           <Icon name={ritual.icon} size={20} />
         </motion.div>
 
         <div className="flex-1 flex items-center justify-between gap-3 min-w-0">
           <div className="min-w-0">
-            <span className="font-body text-[10px] font-bold uppercase tracking-widest block"
-                  style={{ color: ritual.accentHex }}>
+            <span
+              className="font-body text-[10px] font-bold uppercase tracking-widest block"
+              style={{ color: ritual.accentHex }}
+            >
               {ritual.subtitle}
             </span>
-            {/* whitespace-nowrap keeps title on one line */}
             <h3 className="font-heading font-semibold text-[15px] text-[var(--text)] leading-tight whitespace-nowrap">
               {ritual.title}
             </h3>
           </div>
           <span className="font-body text-[10px] font-medium text-forest
                            bg-white/70 rounded-full px-2.5 py-0.5 border border-forest/20 tabular-nums shrink-0">
-            {minutesPerRitual} min
+            {Math.round(minutesPerRitual)} min
           </span>
         </div>
       </div>
 
-      {/* Description + tags — height collapses to 0 when inactive (no phantom gaps) */}
-      <motion.div
-        style={reduce ? {} : { maxHeight: descMaxH, opacity: descOpacity, y: descY }}
-        className="overflow-hidden pl-[52px]"
-      >
-        <p className="font-body text-xs text-[var(--text-light)] leading-relaxed pt-1">
-          {ritual.description}
-        </p>
-        <motion.div style={reduce ? {} : { opacity: tagOpacity }} className="flex flex-wrap gap-1 mt-1.5">
-          {ritual.tags.map(tag => (
-            <span key={tag}
+      {/* Description — slides in when active */}
+      <AnimatePresence initial={false}>
+        {(isActive || reduce) && (
+          <motion.div
+            key="desc"
+            initial={{ opacity: 0, height: 0, y: 8 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -6 }}
+            transition={{ duration: 0.32, ease: 'easeOut' }}
+            className="overflow-hidden pl-[52px]"
+          >
+            <p className="font-body text-xs text-[var(--text-light)] leading-relaxed pt-1">
+              {ritual.description}
+            </p>
+            <div className="flex flex-wrap gap-1 mt-1.5">
+              {ritual.tags.map((tag) => (
+                <span
+                  key={tag}
                   className="font-body text-[9px] font-medium text-forest/70
-                             bg-white/60 rounded-full px-2 py-0.5 border border-forest/15">
-              {tag}
-            </span>
-          ))}
-        </motion.div>
-      </motion.div>
+                             bg-white/60 rounded-full px-2 py-0.5 border border-forest/15"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
@@ -172,9 +164,10 @@ function RitualSlider({
   minutesPerRitual: number
   setMinutesPerRitual: (v: number) => void
 }) {
-  const ritualCount  = 5
-  const totalMinutes = ritualCount * minutesPerRitual
-  const fillPct      = (minutesPerRitual / 15) * 100
+  const ritualCount    = 5
+  const displayMinutes = Math.round(minutesPerRitual)
+  const totalMinutes   = ritualCount * displayMinutes
+  const fillPct        = (minutesPerRitual / 15) * 100
 
   return (
     <div className="flex flex-col items-center gap-5 w-full">
@@ -193,7 +186,7 @@ function RitualSlider({
         </span>
         <span className="w-px h-4 bg-forest/20 shrink-0" />
         <span className="font-body text-sm text-[var(--text-muted)]">
-          {ritualCount} rituals × <AnimatedNumber value={minutesPerRitual} /> min
+          {ritualCount} rituals × <AnimatedNumber value={displayMinutes} /> min
         </span>
       </div>
 
@@ -201,8 +194,9 @@ function RitualSlider({
         <div className="flex items-center gap-3">
           <span className="font-body text-xs text-[var(--text-muted)] tabular-nums w-4 text-right shrink-0 select-none">0</span>
           <div className="relative flex-1 flex items-center h-8">
+            {/* step={0.1} — smooth continuous drag; display rounds to integer */}
             <input
-              type="range" min={0} max={15} step={1}
+              type="range" min={0} max={15} step={0.1}
               value={minutesPerRitual}
               onChange={(e) => setMinutesPerRitual(Number(e.target.value))}
               aria-label="Minutes per ritual"
@@ -214,7 +208,7 @@ function RitualSlider({
 
         <div className="relative h-5 mt-1 mx-7" aria-hidden>
           {[0, 5, 10, 15].map((mark) => {
-            const pct = (mark / 15) * 100
+            const pct      = (mark / 15) * 100
             const isActive = minutesPerRitual >= mark
             return (
               <div key={mark} className="absolute flex flex-col items-center -translate-x-1/2" style={{ left: `${pct}%` }}>
@@ -281,22 +275,108 @@ function RitualSlider({
 
 // ── Main export ──────────────────────────────────────────────────
 export function RitualCards() {
-  const ref          = useRef<HTMLDivElement>(null)
+  const sectionRef   = useRef<HTMLElement>(null)
   const shouldReduce = useReducedMotion()
+
   const [minutesPerRitual, setMinutesPerRitual] = useState(5)
+  const [activeStep, setActiveStep]             = useState(0)
+  const [showCta, setShowCta]                   = useState(false)
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end end'],
-  })
+  // Refs for wheel handler — avoid stale closures
+  const activeStepRef    = useRef(0)
+  const isCapturingRef   = useRef(false)
 
-  // CTA fade — computed at top level (not inside JSX) to satisfy hooks rules
-  const ctaOpacity = useTransform(scrollYProgress, [0.72, 0.80], [0, 1])
+  useEffect(() => { activeStepRef.current = activeStep }, [activeStep])
+
+  // ── Scroll capture effect ────────────────────────────────────────
+  useEffect(() => {
+    if (shouldReduce) return
+    const section = sectionRef.current
+    if (!section) return
+
+    let acc      = 0    // accumulated deltaY across trackpad micro-events
+    let cooldown = false // guard — only one step advance per 480ms
+    const THRESHOLD   = 100  // deltaY units to trigger a step
+    const COOLDOWN_MS = 480  // ms between step advances
+
+    function advanceStep(dir: 1 | -1) {
+      if (cooldown) return
+      const next = activeStepRef.current + dir
+      if (next < 0 || next >= rituals.length) return
+
+      cooldown = true
+      acc = 0
+      activeStepRef.current = next
+      setActiveStep(next)
+      if (next === rituals.length - 1) setShowCta(true)
+      setTimeout(() => { cooldown = false }, COOLDOWN_MS)
+    }
+
+    function handleWheel(e: WheelEvent) {
+      if (!isCapturingRef.current) return
+
+      // Normalise: deltaMode 1 = lines (~40px each), 2 = pages (~800px)
+      const dy = e.deltaMode === 0 ? e.deltaY : e.deltaY * (e.deltaMode === 1 ? 40 : 800)
+
+      const current = activeStepRef.current
+
+      // Release capture at the boundaries so page scroll takes over
+      if (dy > 0 && current >= rituals.length - 1) {
+        isCapturingRef.current = false
+        return
+      }
+      if (dy < 0 && current <= 0) {
+        isCapturingRef.current = false
+        return
+      }
+
+      // We're inside the sequence — block page scroll
+      e.preventDefault()
+      acc += dy
+
+      if (acc >= THRESHOLD)  advanceStep(1)
+      else if (acc <= -THRESHOLD) advanceStep(-1)
+    }
+
+    // Activate capture when section is ≥45% visible
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          acc = 0
+          isCapturingRef.current = true
+
+          // Determine entry direction to set the right starting step
+          if (entry.boundingClientRect.top >= 0) {
+            // Entering from below (user scrolling down) — start at step 0
+            activeStepRef.current = 0
+            setActiveStep(0)
+            setShowCta(false)
+          } else {
+            // Entering from above (user scrolling back up) — start at last step
+            activeStepRef.current = rituals.length - 1
+            setActiveStep(rituals.length - 1)
+            setShowCta(true)
+          }
+        } else {
+          isCapturingRef.current = false
+        }
+      },
+      { threshold: 0.45 }
+    )
+
+    observer.observe(section)
+    window.addEventListener('wheel', handleWheel, { passive: false })
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('wheel', handleWheel)
+    }
+  }, [shouldReduce])
 
   return (
-    <section id="rituals" className="bg-cream" style={{ overflowX: 'clip' }}>
+    <section id="rituals" ref={sectionRef} className="bg-cream" style={{ overflowX: 'clip' }}>
 
-      {/* Header — scrolls normally above the sticky zone */}
+      {/* Header — scrolls normally above the panel */}
       <div className="section-py pb-0">
         <div className="container-wide text-center max-w-2xl mx-auto">
           <span className="inline-block font-body text-xs font-semibold tracking-widest uppercase text-forest mb-4">
@@ -315,19 +395,14 @@ export function RitualCards() {
       </div>
 
       {/*
-        Scroll container — tall enough for all 5 rituals + rest buffer.
-        activeRange = 0.75 means all rituals complete at 75% of scroll;
-        remaining 25% keeps the last step visible before sticky releases.
+        Video + Ritual Steps Panel.
+        No sticky/tall-container needed — scroll capture via wheel events keeps the
+        section in view while cycling through steps. After the last step the page
+        scrolls normally and this section scrolls away.
       */}
-      <div ref={ref} className="relative" style={{ height: `${(rituals.length + 4) * 100}vh` }}>
-
-        {/*
-          ── STICKY PANEL ────────────────────────────────────────────────
-          Height = 16:9 aspect of full viewport width.
-          No fixed pixel/vh height — scales naturally with browser resize.
-        */}
+      <div className="container-wide py-8" style={{ paddingInline: 0 }}>
         <div
-          className="sticky top-0 w-full overflow-hidden"
+          className="relative w-full overflow-hidden rounded-2xl"
           style={{ aspectRatio: '16 / 9' }}
         >
 
@@ -344,10 +419,6 @@ export function RitualCards() {
           />
 
           {/* ── LAYER 1: Left reading gradient ───────────────────────── */}
-          {/*
-            Fades from cream (solid) on the far left → fully transparent by ~55%
-            so the right half of the video is completely unobscured.
-          */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -382,22 +453,19 @@ export function RitualCards() {
             }}
           />
 
-          {/* ── LAYER 2: Progress bar ─────────────────────────────────── */}
+          {/* ── LAYER 2: Progress bar — driven by activeStep ─────────── */}
           <div className="absolute top-[7%] left-0 right-0 px-[4%]" style={{ zIndex: 2 }}>
             <div className="relative h-[2px] bg-forest/15 rounded-full max-w-[42%] overflow-hidden">
               <motion.div
-                style={{ scaleX: shouldReduce ? 1 : scrollYProgress, transformOrigin: 'left' }}
+                animate={{ scaleX: shouldReduce ? 1 : (activeStep + 1) / rituals.length }}
+                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformOrigin: 'left' }}
                 className="absolute inset-0 bg-forest/60 rounded-full"
               />
             </div>
           </div>
 
           {/* ── LAYER 2: Ritual steps — left panel ───────────────────── */}
-          {/*
-            Fills the full height of the sticky panel (inset-y-0).
-            justify-between distributes all 5 steps evenly top-to-bottom.
-            Width ~45% so it sits cleanly over the left gradient zone.
-          */}
           <div
             className="absolute inset-y-0 left-0 flex flex-col justify-between px-[4%] pt-[14%] pb-[10%]"
             style={{ zIndex: 2, width: 'clamp(300px, 58%, 700px)' }}
@@ -407,32 +475,41 @@ export function RitualCards() {
                 key={ritual.title}
                 ritual={ritual}
                 index={i}
-                total={rituals.length}
-                progress={scrollYProgress}
+                isActive={shouldReduce ? true : i === activeStep}
+                isPast={!shouldReduce && i < activeStep}
                 reduce={shouldReduce}
                 minutesPerRitual={minutesPerRitual}
               />
             ))}
           </div>
 
-          {/* ── LAYER 2: CTA ─────────────────────────────────────────── */}
-          <motion.div
-            style={{ zIndex: 2, opacity: shouldReduce ? 1 : ctaOpacity }}
-            className="absolute bottom-[8%] left-0 right-0 text-center pointer-events-none"
-          >
-            <a
-              href="#download"
-              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5
-                         bg-forest text-white font-body text-sm font-semibold
-                         hover:bg-forest-deep transition-colors shadow-soft pointer-events-auto"
-            >
-              🐼 {ritualCards.cta}
-              <span className="text-white/60">→</span>
-            </a>
-          </motion.div>
+          {/* ── LAYER 2: CTA — appears after all steps complete ──────── */}
+          <AnimatePresence>
+            {(showCta || shouldReduce) && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                style={{ zIndex: 2 }}
+                className="absolute bottom-[8%] left-0 right-0 text-center pointer-events-none"
+              >
+                <a
+                  href="#download"
+                  className="inline-flex items-center gap-2 rounded-full px-5 py-2.5
+                             bg-forest text-white font-body text-sm font-semibold
+                             hover:bg-forest-deep transition-colors shadow-soft pointer-events-auto"
+                >
+                  🐼 {ritualCards.cta}
+                  <span className="text-white/60">→</span>
+                </a>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        </div>{/* end sticky */}
-      </div>{/* end scroll container */}
+        </div>
+      </div>
+
     </section>
   )
 }
