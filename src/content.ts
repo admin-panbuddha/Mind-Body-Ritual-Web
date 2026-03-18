@@ -31,6 +31,12 @@ export const navbar = {
 // HERO
 // ─────────────────────────────────────────────────────────────────
 export const hero = {
+  // ── Hero background image ───────────────────────────────────────
+  // Swap this URL with your IONOS-hosted image when ready.
+  // e.g. "https://mindbodyritual.ca/media/hero-background.jpg"
+  // Leave as "" to show the placeholder gradient.
+  backgroundImage: "",
+
   badge:          "Free during Early Access",
   headlineLine1:  "25 minutes.",
   headlineLine2:  "Five rituals.",

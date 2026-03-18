@@ -14,6 +14,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
 import { heroContainer, heroItem, heroPhone } from '@/lib/motion'
+import { hero as heroContent } from '@/content'
 
 // ── Sub-components ──────────────────────────────────────────────
 
@@ -78,11 +79,36 @@ export function Hero() {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden
-                        bg-gradient-to-br from-cream via-[#F5F3EA] to-[#EEF2EC]
-                        pt-20 pb-16">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-cream pt-20 pb-16">
 
-      {/* ── Ambient breathing background orbs ──────────────────── */}
+      {/* ── LAYER 0: Hero background image (swap URL in content.ts) ─ */}
+      <div className="absolute inset-0 overflow-hidden" aria-hidden>
+        {heroContent.backgroundImage ? (
+          /* Real image — covers section, stays centered at any size */
+          <img
+            src={heroContent.backgroundImage}
+            alt=""
+            className="w-full h-full object-cover object-center"
+          />
+        ) : (
+          /* Placeholder — shows a dashed outline so you know exactly where the image will sit */
+          <div className="w-full h-full flex items-center justify-center"
+               style={{
+                 background: 'linear-gradient(135deg, #e8f0e9 0%, #f5f3ea 50%, #eef2ec 100%)',
+                 border: '2px dashed rgba(61,107,79,0.2)',
+               }}>
+            <span className="font-body text-xs text-forest/30 tracking-widest uppercase select-none">
+              Hero background image — set URL in src/content.ts → hero.backgroundImage
+            </span>
+          </div>
+        )}
+
+        {/* Soft cream overlay — keeps text readable over any photo */}
+        <div className="absolute inset-0"
+             style={{ background: 'linear-gradient(to right, rgba(250,249,242,0.82) 40%, rgba(250,249,242,0.45) 100%)' }} />
+      </div>
+
+      {/* ── LAYER 1: Ambient breathing orbs (on top of photo, under content) ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full
                         bg-gradient-to-br from-sage/20 to-forest/10 blur-3xl
@@ -90,10 +116,6 @@ export function Hero() {
         <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full
                         bg-gradient-to-tr from-amber/15 to-gold/10 blur-3xl
                         hero-orb-breathe hero-orb-breathe--delayed" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                        w-[800px] h-[800px] rounded-full
-                        bg-gradient-radial from-[#F0EDE4]/60 to-transparent blur-2xl
-                        hero-orb-breathe hero-orb-breathe--slow" />
       </div>
 
       <div className="container-wide relative z-10">
