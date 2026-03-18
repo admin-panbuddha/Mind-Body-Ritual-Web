@@ -16,71 +16,9 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import Image from 'next/image'
+import { videoLibrary } from '@/content'
 
-// ─── YOUR IONOS-HOSTED VIDEOS — update src / thumbnail URLs after uploading ──
-const VIDEOS = [
-  {
-    id: 1,
-    title: 'Morning Meditation Guide',
-    ritual: 'Meditation',
-    duration: '5:12',
-    description: 'Ground yourself with a simple seated practice before the day begins.',
-    src: 'https://YOUR_IONOS_DOMAIN/media/videos/meditation-guide.mp4',
-    thumbnail: 'https://YOUR_IONOS_DOMAIN/media/thumbnails/meditation-guide.jpg',
-    icon: 'Meditation',
-  },
-  {
-    id: 2,
-    title: 'Breathwork for Clarity',
-    ritual: 'Breathwork',
-    duration: '5:08',
-    description: 'A guided breathing sequence that clears the mind and energises the body.',
-    src: 'https://YOUR_IONOS_DOMAIN/media/videos/breathwork-clarity.mp4',
-    thumbnail: 'https://YOUR_IONOS_DOMAIN/media/thumbnails/breathwork-clarity.jpg',
-    icon: 'Breath',
-  },
-  {
-    id: 3,
-    title: 'Movement Flow Sequence',
-    ritual: 'Movement',
-    duration: '5:20',
-    description: 'Gentle full-body movement to awaken muscles and release overnight stiffness.',
-    src: 'https://YOUR_IONOS_DOMAIN/media/videos/movement-flow.mp4',
-    thumbnail: 'https://YOUR_IONOS_DOMAIN/media/thumbnails/movement-flow.jpg',
-    icon: 'Flow',
-  },
-  {
-    id: 4,
-    title: 'Mindful Nourishment',
-    ritual: 'Nutrition',
-    duration: '5:05',
-    description: 'Simple rituals around food that build a conscious relationship with nourishment.',
-    src: 'https://YOUR_IONOS_DOMAIN/media/videos/mindful-nourishment.mp4',
-    thumbnail: 'https://YOUR_IONOS_DOMAIN/media/thumbnails/mindful-nourishment.jpg',
-    icon: 'Lotus',
-  },
-  {
-    id: 5,
-    title: 'Gratitude Practice',
-    ritual: 'Gratitude',
-    duration: '5:00',
-    description: 'Close your morning with a gratitude sequence that rewires your outlook.',
-    src: 'https://YOUR_IONOS_DOMAIN/media/videos/gratitude-practice.mp4',
-    thumbnail: 'https://YOUR_IONOS_DOMAIN/media/thumbnails/gratitude-practice.jpg',
-    icon: 'Sun',
-  },
-  {
-    id: 6,
-    title: 'Full Family Morning Ritual',
-    ritual: 'All 5 Rituals',
-    duration: '25:00',
-    description: 'The complete 25-minute morning ritual, done together as a family.',
-    src: 'https://YOUR_IONOS_DOMAIN/media/videos/full-family-ritual.mp4',
-    thumbnail: 'https://YOUR_IONOS_DOMAIN/media/thumbnails/full-family-ritual.jpg',
-    icon: 'Sun',
-  },
-]
-// ─────────────────────────────────────────────────────────────────────────────
+const VIDEOS = videoLibrary.videos
 
 type Video = typeof VIDEOS[number]
 
@@ -224,13 +162,13 @@ export function VideoLibrary() {
         {/* Heading */}
         <div className="text-center mb-12">
           <span className="inline-block text-xs font-semibold uppercase tracking-[0.18em] text-amber mb-3">
-            Video Library
+            {videoLibrary.sectionLabel}
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-forest-deep leading-tight mb-4">
-            Watch. Learn. Practice.
+            {videoLibrary.headline}
           </h2>
           <p className="text-forest/70 text-base max-w-md mx-auto">
-            Guided video sessions for every ritual — short enough for a busy morning, deep enough to matter.
+            {videoLibrary.subheadline}
           </p>
         </div>
 
@@ -243,7 +181,7 @@ export function VideoLibrary() {
 
         {/* Footer note */}
         <p className="text-center text-xs text-forest/40 mt-10">
-          New videos added every month with your membership
+          {videoLibrary.footerNote}
         </p>
 
       </div>

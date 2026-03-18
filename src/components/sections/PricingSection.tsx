@@ -3,49 +3,12 @@
 import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
+import { pricing } from '@/content'
 
-const plans = [
-  {
-    name: 'Free',
-    price: '$0',
-    period: 'forever',
-    description: 'Everything you need to start your family ritual.',
-    cta: 'Get Started Free',
-    ctaVariant: 'outline' as const,
-    highlight: false,
-    features: [
-      '5 guided ritual sessions',
-      'Breathwork & movement library',
-      'Family streak tracker',
-      'Progress insights',
-      'Ages 3+ content',
-      'iOS & Android app',
-    ],
-    missing: ['Unlimited session library', 'Premium audio guides', 'Family sharing (up to 6)', 'Offline mode'],
-  },
-  {
-    name: 'Family',
-    price: '$9.99',
-    period: 'per month',
-    annualNote: 'or $79.99/year (save 33%)',
-    description: 'Unlimited access for your whole family. Cancel anytime.',
-    cta: 'Start Free Trial',
-    ctaVariant: 'primary' as const,
-    highlight: true,
-    badge: 'Most Popular',
-    features: [
-      'Everything in Free',
-      'Unlimited session library',
-      'Premium audio guides',
-      'Family sharing (up to 6)',
-      'Offline mode',
-      'Priority support',
-      'New content weekly',
-      'Milestone celebrations',
-    ],
-    missing: [],
-  },
-]
+const plans = pricing.plans.map(p => ({
+  ...p,
+  ctaVariant: (p.highlight ? 'primary' : 'outline') as 'primary' | 'outline',
+}))
 
 function CheckIcon() {
   return (
@@ -74,13 +37,13 @@ export function PricingSection() {
         <Reveal className="text-center max-w-xl mx-auto mb-16">
           <span className="inline-block font-body text-xs font-semibold tracking-widest
                            uppercase text-forest mb-3">
-            Pricing
+            {pricing.sectionLabel}
           </span>
           <h2 className="font-heading text-heading-xl text-[var(--text)] mb-4">
-            Simple, transparent pricing
+            {pricing.headline}
           </h2>
           <p className="font-body text-body-lg text-[var(--text-light)]">
-            Start free. Upgrade when you're ready. No surprise charges.
+            {pricing.subheadline}
           </p>
         </Reveal>
 
@@ -177,7 +140,7 @@ export function PricingSection() {
         {/* Trust line */}
         <Reveal delay={0.2}>
           <p className="text-center font-body text-sm text-[var(--text-muted)] mt-8">
-            Secure checkout · Cancel anytime · No credit card required to start free
+            {pricing.trustLine}
           </p>
         </Reveal>
       </div>

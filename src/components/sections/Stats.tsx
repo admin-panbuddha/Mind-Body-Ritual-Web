@@ -3,13 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { RevealStagger, RevealItem } from '@/components/ui/Reveal'
 import { Icon } from '@/components/ui/Icon'
-
-const stats = [
-  { value: 2400, suffix: '+', label: 'Families using MindBodyRitual', icon: 'ui_icon_profile' },
-  { value: 25, suffix: ' min', label: 'Total daily ritual time', icon: 'ui_Icon_Clock' },
-  { value: 5, suffix: '', label: 'Rituals per session', icon: 'ui_Icon_Focus' },
-  { value: 4.9, suffix: '★', label: 'App Store rating', icon: 'ui_Icon_Lotus', isDecimal: true },
-]
+import { stats } from '@/content'
 
 function CountUp({
   target,

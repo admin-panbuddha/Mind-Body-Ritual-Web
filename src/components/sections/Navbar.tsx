@@ -4,14 +4,9 @@ import { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
+import { navbar } from '@/content'
 
-const links = [
-  { label: 'The Ritual', href: '#rituals' },
-  { label: 'How It Works', href: '#how-it-works' },
-  { label: 'Pricing', href: '/pricing/' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Experiment', href: '/experiment' },
-]
+const links = navbar.links
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -36,7 +31,7 @@ export function Navbar() {
         <nav className="flex items-center justify-between h-16 md:h-20" aria-label="Main navigation">
           {/* Brand */}
           <a href="/" className="font-heading font-semibold text-xl text-forest hover:opacity-80 transition-opacity">
-            MindBodyRitual
+            {navbar.brand}
           </a>
 
           {/* Desktop links */}

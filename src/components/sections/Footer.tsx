@@ -1,23 +1,4 @@
-const footerLinks = {
-  Product: [
-    { label: 'The Rituals', href: '#rituals' },
-    { label: 'How It Works', href: '#how-it-works' },
-    { label: 'Pricing', href: '/pricing/' },
-    { label: 'Download the App', href: '#download' },
-  ],
-  Company: [
-    { label: 'About Panbuddha', href: '#' },
-    { label: 'Blog', href: '#' },
-    { label: 'Careers', href: '#' },
-    { label: 'Press', href: '#' },
-  ],
-  Support: [
-    { label: 'Help Centre', href: '/support/' },
-    { label: 'Contact Us', href: 'mailto:hello@mindbodyritual.ca' },
-    { label: 'Privacy Policy', href: '/privacy/' },
-    { label: 'Terms of Service', href: '/terms/' },
-  ],
-}
+import { footer } from '@/content'
 
 export function Footer() {
   return (
@@ -29,18 +10,18 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <a href="/" className="font-heading font-semibold text-xl text-white hover:text-white/80
                                    transition-opacity inline-block mb-3">
-              MindBodyRitual
+              {footer.brand}
             </a>
             <p className="font-body text-sm text-white/60 leading-relaxed mb-4 max-w-[200px]">
-              25 minutes. Five rituals. One family.
+              {footer.tagline}
             </p>
             <p className="font-body text-xs text-white/40">
-              By Panbuddha · Made in Canada 🇨🇦
+              {footer.madeBy}
             </p>
           </div>
 
           {/* Links */}
-          {Object.entries(footerLinks).map(([section, links]) => (
+          {Object.entries(footer.links).map(([section, links]) => (
             <div key={section}>
               <h4 className="font-body font-semibold text-xs uppercase tracking-widest
                              text-white/40 mb-4">
@@ -69,9 +50,8 @@ export function Footer() {
             © {new Date().getFullYear()} Panbuddha Inc. All rights reserved.
           </p>
 
-          {/* Social links placeholder */}
           <div className="flex items-center gap-4">
-            {['Instagram', 'TikTok', 'Facebook'].map((social) => (
+            {footer.socialLinks.map((social) => (
               <a
                 key={social}
                 href="#"

@@ -1,17 +1,13 @@
 'use client'
 
 import { Icon } from '@/components/ui/Icon'
+import { socialProof } from '@/content'
 
-const items = [
-  { icon: 'ui_Icon_leaf', text: 'Loved by 2,400+ families' },
-  { icon: 'ui_Icon_Lotus', text: '4.9 App Store rating' },
-  { icon: 'ui_Icon_Meditation', text: 'Breathwork · Movement · Gratitude' },
-  { icon: 'ui_icon_profile', text: 'Designed for ages 3+' },
-  { icon: 'ui_Icon_Clock', text: 'Just 25 minutes a day' },
-  { icon: 'ui_Icon_inner-peace', text: 'Built by parents, for parents' },
-  { icon: 'ui_Icon_Exploring', text: 'Available on iOS & Android' },
-  { icon: 'ui_Icon_Focus', text: 'Featured in Wellness Weekly' },
+const icons = [
+  'ui_Icon_leaf', 'ui_Icon_Lotus', 'ui_Icon_Meditation', 'ui_icon_profile',
+  'ui_Icon_Clock', 'ui_Icon_inner-peace', 'ui_Icon_Exploring', 'ui_Icon_Focus',
 ]
+const items = socialProof.items.map((text, i) => ({ icon: icons[i % icons.length], text }))
 
 export function SocialProof() {
   return (

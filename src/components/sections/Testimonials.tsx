@@ -2,57 +2,7 @@
 
 import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
 import { Icon } from '@/components/ui/Icon'
-
-const testimonials = [
-  {
-    quote:
-      "We've tried so many 'family wellness' things that fell apart after a week. This actually stuck. My daughter literally asks for it now every morning.",
-    author: 'Sarah M.',
-    role: 'Mom of two, Vancouver',
-    icon: 'ui_Icon_Meditation',
-    stars: 5,
-  },
-  {
-    quote:
-      "The breathwork section alone has been transformative for my anxious 5-year-old. We do it together every morning and I swear it sets the tone for the whole day.",
-    author: 'David K.',
-    role: 'Dad, Toronto',
-    icon: 'ui_Icon_Breath',
-    stars: 5,
-  },
-  {
-    quote:
-      "I was skeptical — 25 minutes sounds like a lot. But it goes by so fast and my kids are so engaged. We haven't missed a morning in 6 weeks.",
-    author: 'Amara T.',
-    role: 'Single mom of three, Calgary',
-    icon: 'ui_Icon_Flow',
-    stars: 5,
-  },
-  {
-    quote:
-      "The gratitude ritual has opened up conversations with my son that I never expected. He shares things during our practice he'd never bring up otherwise.",
-    author: 'James L.',
-    role: 'Father of one, Montreal',
-    icon: 'ui_Icon_Lotus',
-    stars: 5,
-  },
-  {
-    quote:
-      "My 3-year-old does the movement section with me and it's genuinely the cutest thing I've ever seen. We laugh every single morning. Worth it just for that.",
-    author: 'Priya R.',
-    role: 'New mom, Ottawa',
-    icon: 'ui_Icon_Sun',
-    stars: 5,
-  },
-  {
-    quote:
-      'As someone who struggled with a morning routine myself, having a kid-friendly version that WE do together was the accountability I needed. We both grew.',
-    author: 'Chris B.',
-    role: 'Dad, Edmonton',
-    icon: 'ui_icon_calm',
-    stars: 5,
-  },
-]
+import { testimonials as testimonialsData } from '@/content'
 
 export function Testimonials() {
   return (
@@ -63,13 +13,13 @@ export function Testimonials() {
         <Reveal className="text-center max-w-xl mx-auto mb-16">
           <span className="inline-block font-body text-xs font-semibold tracking-widest
                            uppercase text-forest mb-3">
-            Families Love It
+            {testimonialsData.sectionLabel}
           </span>
           <h2 className="font-heading text-heading-xl text-[var(--text)] mb-4">
-            Real families. Real mornings.
+            {testimonialsData.headline}
           </h2>
           <p className="font-body text-body-lg text-[var(--text-light)]">
-            Over 2,400 families have made MindBodyRitual part of their morning — here's what they say.
+            {testimonialsData.subheadline}
           </p>
         </Reveal>
 
@@ -78,7 +28,7 @@ export function Testimonials() {
           className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5"
           stagger={0.08}
         >
-          {testimonials.map((t) => (
+          {testimonialsData.items.map((t) => (
             <RevealItem key={t.author}>
               <div
                 className="break-inside-avoid rounded-3xl p-6

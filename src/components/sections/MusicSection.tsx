@@ -16,51 +16,9 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react'
 import Image from 'next/image'
+import { musicSection } from '@/content'
 
-// ─── YOUR IONOS-HOSTED TRACKS — update src URLs after uploading ──────────────
-const TRACKS = [
-  {
-    id: 1,
-    title: 'Morning Stillness',
-    ritual: 'Meditation',
-    duration: '5:00',
-    icon: 'Meditation',
-    src: 'https://YOUR_IONOS_DOMAIN/media/audio/morning-stillness.mp3',
-  },
-  {
-    id: 2,
-    title: 'Breathing Space',
-    ritual: 'Breathwork',
-    duration: '5:00',
-    icon: 'Breath',
-    src: 'https://YOUR_IONOS_DOMAIN/media/audio/breathing-space.mp3',
-  },
-  {
-    id: 3,
-    title: 'Flow State',
-    ritual: 'Movement',
-    duration: '5:00',
-    icon: 'Flow',
-    src: 'https://YOUR_IONOS_DOMAIN/media/audio/flow-state.mp3',
-  },
-  {
-    id: 4,
-    title: 'Nourish',
-    ritual: 'Nutrition',
-    duration: '5:00',
-    icon: 'Lotus',
-    src: 'https://YOUR_IONOS_DOMAIN/media/audio/nourish.mp3',
-  },
-  {
-    id: 5,
-    title: 'Grateful Heart',
-    ritual: 'Gratitude',
-    duration: '5:00',
-    icon: 'Sun',
-    src: 'https://YOUR_IONOS_DOMAIN/media/audio/grateful-heart.mp3',
-  },
-]
-// ─────────────────────────────────────────────────────────────────────────────
+const TRACKS = musicSection.tracks
 
 type Track = typeof TRACKS[number]
 
@@ -236,13 +194,13 @@ export function MusicSection() {
         {/* Heading */}
         <div className="text-center mb-12">
           <span className="inline-block text-xs font-semibold uppercase tracking-[0.18em] text-amber mb-3">
-            Media Library
+            {musicSection.sectionLabel}
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-forest-deep leading-tight mb-4">
-            Sacred Sounds
+            {musicSection.headline}
           </h2>
           <p className="text-forest/70 text-base max-w-md mx-auto">
-            Every ritual is paired with music crafted to guide your mind and body into the right state.
+            {musicSection.subheadline}
           </p>
         </div>
 
@@ -277,7 +235,7 @@ export function MusicSection() {
 
         {/* Footer note */}
         <p className="text-center text-xs text-forest/40 mt-8">
-          All tracks are included with your MindBodyRitual membership
+          {musicSection.footerNote}
         </p>
 
       </div>

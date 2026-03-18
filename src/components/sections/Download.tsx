@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Reveal, RevealStagger, RevealItem } from '@/components/ui/Reveal'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
+import { download } from '@/content'
 
 export function Download() {
   const [email, setEmail] = useState('')
@@ -40,21 +41,20 @@ export function Download() {
             </div>
             <span className="inline-block font-body text-xs font-semibold tracking-widest
                              uppercase text-forest mb-4">
-              Get the App
+              {download.sectionLabel}
             </span>
           </Reveal>
 
           <Reveal delay={0.1}>
             <h2 className="font-heading text-heading-xl md:text-display-lg
                            text-[var(--text)] mb-4">
-              Start your family ritual tomorrow morning.
+              {download.headline}
             </h2>
           </Reveal>
 
           <Reveal delay={0.18}>
             <p className="font-body text-body-lg text-[var(--text-light)] mb-10">
-              Download MindBodyRitual free. No subscription required to get started.
-              Available on iOS and Android.
+              {download.subheadline}
             </p>
           </Reveal>
 
@@ -104,13 +104,13 @@ export function Download() {
           {/* Email waitlist */}
           <Reveal delay={0.3} className="max-w-md mx-auto">
             <p className="font-body text-sm text-[var(--text-light)] mb-4">
-              Or join the early access list — we'll email you when your region goes live.
+              {download.waitlistText}
             </p>
 
             {submitted ? (
               <div className="flex items-center justify-center gap-2 py-4 text-forest font-body font-semibold">
                 <Icon name="ui_Icon_leaf" size={24} className="inline-block" />
-                You're on the list! We'll be in touch soon.
+                {download.waitlistSuccess}
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
@@ -118,7 +118,7 @@ export function Download() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
+                  placeholder={download.emailPlaceholder}
                   required
                   className="flex-1 px-4 py-3 rounded-xl border border-[var(--border)]
                              bg-white font-body text-sm text-[var(--text)]
@@ -133,7 +133,7 @@ export function Download() {
                   disabled={loading}
                   className="sm:flex-shrink-0"
                 >
-                  {loading ? 'Joining...' : 'Join Early Access'}
+                  {loading ? download.waitlistLoading : download.waitlistButton}
                 </Button>
               </form>
             )}

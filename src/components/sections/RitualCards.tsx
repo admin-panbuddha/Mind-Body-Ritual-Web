@@ -15,59 +15,14 @@
 import { useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react'
 import { Icon } from '@/components/ui/Icon'
+import { ritualCards } from '@/content'
 
 // ─── IONOS video source ──────────────────────────────────────────
 const RITUAL_VIDEO_SRC = 'https://mindbodyritual.ca/-videos/website-center-page.mp4'
 const CREAM = '#FAF9F2'
 // ────────────────────────────────────────────────────────────────
 
-const rituals = [
-  {
-    step: 1,
-    icon: 'ui_Icon_Sun',
-    title: 'Wake-Up Stretch',
-    subtitle: 'Body',
-    accentHex: '#C9813A',
-    description: 'Gentle full-body stretches to wake up muscles, improve circulation, and ease into the day with a smile.',
-    tags: ['Ages 3+', 'No equipment'],
-  },
-  {
-    step: 2,
-    icon: 'ui_Icon_Breath',
-    title: 'Breathwork',
-    subtitle: 'Mind',
-    accentHex: '#3D6B4F',
-    description: 'Simple breathing exercises that calm the nervous system, build focus, and set a peaceful tone for the day.',
-    tags: ['Calming', 'Focus'],
-  },
-  {
-    step: 3,
-    icon: 'ui_Icon_Flow',
-    title: 'Movement Flow',
-    subtitle: 'Energy',
-    accentHex: '#7C3AED',
-    description: 'Fun, energising movement — animal walks, yoga poses, balance challenges — that kids actually look forward to.',
-    tags: ['High energy', 'Playful'],
-  },
-  {
-    step: 4,
-    icon: 'ui_Icon_leaf',
-    title: 'Nature Moment',
-    subtitle: 'Connection',
-    accentHex: '#5a8a6a',
-    description: 'A mindful pause to notice the natural world — light, weather, plants, sounds — and feel part of something larger.',
-    tags: ['Mindfulness', 'Grounding'],
-  },
-  {
-    step: 5,
-    icon: 'ui_Icon_Lotus',
-    title: 'Gratitude Practice',
-    subtitle: 'Heart',
-    accentHex: '#A8843A',
-    description: "Share one thing you're grateful for. Build the emotional habit of appreciation that lasts a lifetime.",
-    tags: ['Emotional health', 'Bonding'],
-  },
-]
+const rituals = ritualCards.rituals.map((r, i) => ({ ...r, step: i + 1 }))
 
 // ── Individual ritual step ───────────────────────────────────────
 function RitualStep({
@@ -226,8 +181,8 @@ function RitualSlider({
 
       <div className="ritual-headline-wrap">
         <p className="font-heading text-[1.35rem] md:text-[1.6rem] leading-snug text-[var(--text)] text-center max-w-sm mx-auto">
-          Select how long you want{' '}
-          <span className="ritual-headline-accent text-forest">each ritual.</span>
+          {ritualCards.sliderHeadline}{' '}
+          <span className="ritual-headline-accent text-forest">{ritualCards.sliderAccent}</span>
         </p>
       </div>
 
@@ -345,13 +300,15 @@ export function RitualCards() {
       <div className="section-py pb-0">
         <div className="container-wide text-center max-w-2xl mx-auto">
           <span className="inline-block font-body text-xs font-semibold tracking-widest uppercase text-forest mb-4">
-            The Five Rituals
+            {ritualCards.sectionLabel}
           </span>
           <h2 className="font-heading text-display-sm text-[var(--text)] mb-4">
-            Five minutes each.<br />A lifetime of impact.
+            {ritualCards.headline.split('\n').map((line, i, arr) => (
+              <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+            ))}
           </h2>
           <p className="font-body text-body-lg text-[var(--text-light)] mb-7">
-            Each ritual is carefully designed to be short enough to actually do and meaningful enough to matter.
+            {ritualCards.subheadline}
           </p>
           <RitualSlider minutesPerRitual={minutesPerRitual} setMinutesPerRitual={setMinutesPerRitual} />
         </div>
@@ -469,7 +426,7 @@ export function RitualCards() {
                          bg-forest text-white font-body text-sm font-semibold
                          hover:bg-forest-deep transition-colors shadow-soft pointer-events-auto"
             >
-              🐼 Start your ritual with Panbuddha
+              🐼 {ritualCards.cta}
               <span className="text-white/60">→</span>
             </a>
           </motion.div>
