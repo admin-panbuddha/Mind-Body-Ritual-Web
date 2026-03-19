@@ -130,10 +130,10 @@ export const howItWorks = {
 // ─────────────────────────────────────────────────────────────────
 export const ritualCards = {
   sectionLabel:   "The Five Rituals",
-  headline:       "Five minutes each.\nA lifetime of impact.",
+  headline:       "A morning ritual that has an impact.",
   subheadline:    "Each ritual is carefully designed to be short enough to actually do and meaningful enough to matter.",
-  sliderHeadline: "Select how long you want",
-  sliderAccent:   "each ritual.",
+  sliderHeadline: "Choose how long",
+  sliderAccent:   "each ritual lasts.",
   cta:            "Start your ritual with Panbuddha",
 
   rituals: [

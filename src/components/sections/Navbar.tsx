@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { Icon } from '@/components/ui/Icon'
 import { cn } from '@/lib/utils'
 import { navbar } from '@/content'
 
@@ -30,8 +31,9 @@ export function Navbar() {
       <div className="container-wide">
         <nav className="flex items-center justify-between h-16 md:h-20" aria-label="Main navigation">
           {/* Brand */}
-          <a href="/" className="font-heading font-semibold text-xl text-forest hover:opacity-80 transition-opacity">
-            {navbar.brand}
+          <a href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+            <Icon name="ui_Icon_MindBodyRitual" size={32} alt="MindBodyRitual logo" />
+            <span className="font-heading font-semibold text-xl text-forest">{navbar.brand}</span>
           </a>
 
           {/* Desktop links */}

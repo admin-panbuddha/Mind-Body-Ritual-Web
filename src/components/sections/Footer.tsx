@@ -1,3 +1,4 @@
+import { Icon } from '@/components/ui/Icon'
 import { footer } from '@/content'
 
 export function Footer() {
@@ -8,9 +9,11 @@ export function Footer() {
 
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <a href="/" className="font-heading font-semibold text-xl text-white hover:text-white/80
-                                   transition-opacity inline-block mb-3">
-              {footer.brand}
+            <a href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity mb-3">
+              <span className="shrink-0" style={{ filter: 'brightness(0) invert(1)' }}>
+                <Icon name="ui_Icon_MindBodyRitual" size={32} alt="MindBodyRitual logo" />
+              </span>
+              <span className="font-heading font-semibold text-xl text-white">{footer.brand}</span>
             </a>
             <p className="font-body text-sm text-white/60 leading-relaxed mb-4 max-w-[200px]">
               {footer.tagline}

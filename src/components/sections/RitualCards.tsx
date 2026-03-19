@@ -33,9 +33,9 @@ function ClockVisual({ totalMinutes, maxMinutes = 25 }: { totalMinutes: number; 
       className="pointer-events-none select-none"
       style={{
         position: 'absolute',
-        bottom: '3%',
-        right: '1.5%',
-        width: 'clamp(140px, 24%, 220px)',
+        top: '5%',
+        right: '3%',
+        width: 'clamp(90px, 15%, 130px)',
         aspectRatio: '1',
         zIndex: 2,
       }}
@@ -74,7 +74,7 @@ function ClockVisual({ totalMinutes, maxMinutes = 25 }: { totalMinutes: number; 
           animate={{ strokeDashoffset: dashOffset }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           transform={`rotate(-90, ${CX}, ${CY})`}
-          strokeOpacity="0.52"
+          strokeOpacity="0.38"
         />
 
         {/* Small dot at 12 o'clock */}
@@ -138,13 +138,15 @@ function RitualStep({
     <motion.div
       onMouseEnter={onHover}
       animate={reduce ? {} : {
-        opacity: isActive ? 1 : 0.28,
-        scale:   isActive ? 1.02 : 0.97,
+        opacity: isActive ? 1 : 0.32,
+        scale:   isActive ? 1.03 : 0.98,
       }}
       initial={false}
       transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       className="relative cursor-default select-none"
-      style={{ transformOrigin: 'left center' }}
+      style={{
+        transformOrigin: 'left center',
+      }}
     >
       {/* Vertical connector line */}
       <div
@@ -157,8 +159,8 @@ function RitualStep({
         }}
       />
 
-      {/* Icon + title row */}
-      <div className="flex items-center gap-3">
+      {/* Icon + title row — compact in collapsed state */}
+      <div className="flex items-center gap-2.5" style={{ gap: isActive && !reduce ? '12px' : '10px' }}>
         <motion.div
           animate={reduce || !isActive
             ? { scale: 1, opacity: 1 }
@@ -174,11 +176,11 @@ function RitualStep({
           <Icon name={ritual.icon} size={20} />
         </motion.div>
 
-        <div className="flex-1 flex items-center justify-between gap-3 min-w-0">
+        <div className="flex-1 flex items-center justify-between gap-2.5 min-w-0" style={{ gap: isActive && !reduce ? '12px' : '8px' }}>
           <div className="min-w-0">
             <span
               className="font-body text-[10px] font-bold uppercase tracking-widest block"
-              style={{ color: ritual.accentHex }}
+              style={{ color: ritual.accentHex, opacity: isActive || reduce ? 1 : 0.7 }}
             >
               {ritual.subtitle}
             </span>
@@ -186,13 +188,19 @@ function RitualStep({
               {ritual.title}
             </h3>
           </div>
-          <span
+          {/* Duration pill — visible always, but pulls back visually when inactive */}
+          <motion.span
+            animate={reduce ? {} : {
+              opacity: isActive ? 1 : 0.55,
+              scale: isActive ? 1 : 0.92,
+            }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="font-body text-[13px] font-semibold text-forest tabular-nums shrink-0
                        bg-white/80 rounded-full border border-forest/25 leading-none"
-            style={{ padding: '5px 10px', boxShadow: '0 1px 4px rgba(61,107,79,0.10)' }}
+            style={{ padding: '5px 10px', boxShadow: '0 1px 4px rgba(61,107,79,0.10)', transformOrigin: 'right center' }}
           >
             {minutesPerRitual} min
-          </span>
+          </motion.span>
         </div>
       </div>
 
@@ -201,16 +209,16 @@ function RitualStep({
         {(isActive || reduce) && (
           <motion.div
             key="desc"
-            initial={{ opacity: 0, height: 0, y: 6 }}
+            initial={{ opacity: 0, height: 0, y: 4 }}
             animate={{ opacity: 1, height: 'auto', y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -4 }}
-            transition={{ duration: 0.26, ease: 'easeOut' }}
+            exit={{ opacity: 0, height: 0, y: -3 }}
+            transition={{ duration: 0.24, ease: 'easeOut' }}
             className="overflow-hidden pl-[52px]"
           >
-            <p className="font-body text-xs text-[var(--text-light)] leading-relaxed pt-1">
+            <p className="font-body text-xs text-[var(--text-light)] leading-relaxed pt-0.5">
               {ritual.description}
             </p>
-            <div className="flex flex-wrap gap-1 mt-1.5">
+            <div className="flex flex-wrap gap-1 mt-1">
               {ritual.tags.map((tag) => (
                 <span
                   key={tag}
@@ -269,7 +277,7 @@ function RitualSlider({
     <div className="flex flex-col items-center gap-5 w-full">
 
       <div className="ritual-headline-wrap">
-        <p className="font-heading text-[1.35rem] md:text-[1.6rem] leading-snug text-[var(--text)] text-center max-w-sm mx-auto">
+        <p className="font-heading text-[1.35rem] md:text-[1.6rem] leading-snug text-[var(--text)] text-center max-w-lg mx-auto">
           {ritualCards.sliderHeadline}{' '}
           <span className="ritual-headline-accent text-forest">{ritualCards.sliderAccent}</span>
         </p>
@@ -455,7 +463,7 @@ export function RitualCards() {
           */}
           <div
             style={{ zIndex: 3 }}
-            className="absolute bottom-[6%] left-[4%] pointer-events-none"
+            className="absolute bottom-[6%] left-1/2 -translate-x-1/2 pointer-events-none"
           >
             <a
               href="#download"
