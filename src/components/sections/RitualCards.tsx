@@ -37,7 +37,7 @@ function ClockVisual({ totalMinutes, maxMinutes = 25 }: { totalMinutes: number; 
         right: '3%',
         width: 'clamp(90px, 15%, 130px)',
         aspectRatio: '1',
-        zIndex: 3,
+        zIndex: 2,
       }}
     >
       <svg
@@ -399,28 +399,19 @@ export function RitualCards() {
           style={{ aspectRatio: '16 / 9' }}
         >
 
-          {/* ── LAYER 0: Fallback background (shown when video hasn't loaded) ── */}
-          <div
-            className="absolute inset-0"
-            style={{
-              zIndex: 0,
-              background: 'linear-gradient(135deg, #2a4d3a 0%, #3d6b4f 35%, #4e7d5e 55%, #6a9e78 75%, #8bbb90 100%)',
-            }}
-          />
-
-          {/* ── LAYER 0: Background video (sits above fallback) ───────────── */}
+          {/* ── LAYER 0: Background video ─────────────────────────────── */}
           <video
             src={RITUAL_VIDEO_SRC}
             autoPlay muted loop playsInline preload="auto"
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ zIndex: 1 }}
+            style={{ zIndex: 0 }}
           />
 
-          {/* ── LAYER 2: Left reading gradient ───────────────────────── */}
+          {/* ── LAYER 1: Left reading gradient ───────────────────────── */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              zIndex: 2,
+              zIndex: 1,
               background: `linear-gradient(to right,
                 ${CREAM} 0%,
                 ${CREAM}ee 18%,
@@ -431,16 +422,16 @@ export function RitualCards() {
             }}
           />
 
-          {/* ── LAYER 2: Top blend ─────────────────── */}
+          {/* ── LAYER 1: Top blend ─────────────────── */}
           <div
             className="absolute top-0 left-0 right-0 pointer-events-none"
-            style={{ zIndex: 2, height: '10%', background: `linear-gradient(to bottom, ${CREAM}, transparent)` }}
+            style={{ zIndex: 1, height: '10%', background: `linear-gradient(to bottom, ${CREAM}, transparent)` }}
           />
 
-          {/* ── LAYER 2: Bottom blend ──────────────── */}
+          {/* ── LAYER 1: Bottom blend ──────────────── */}
           <div
             className="absolute bottom-0 left-0 right-0 pointer-events-none"
-            style={{ zIndex: 2, height: '10%', background: `linear-gradient(to top, ${CREAM}, transparent)` }}
+            style={{ zIndex: 1, height: '10%', background: `linear-gradient(to top, ${CREAM}, transparent)` }}
           />
 
           {/* ── LAYER 2: Animated clock — bottom-right, synced to slider ── */}
@@ -453,7 +444,7 @@ export function RitualCards() {
           */}
           <div
             className="absolute inset-y-0 left-0 flex flex-col justify-between px-[4%] py-[7%]"
-            style={{ zIndex: 3, width: 'clamp(300px, 58%, 700px)' }}
+            style={{ zIndex: 2, width: 'clamp(300px, 58%, 700px)' }}
             onMouseLeave={() => setHoveredStep(0)}
           >
             {rituals.map((ritual, i) => (
@@ -470,10 +461,10 @@ export function RitualCards() {
           </div>
 
           {/*
-            ── LAYER 4: CTA — bottom-center, positioned near bottom edge ──
+            ── LAYER 3: CTA — bottom-center, positioned near bottom edge ──
           */}
           <div
-            style={{ zIndex: 4 }}
+            style={{ zIndex: 3 }}
             className="absolute bottom-[2%] left-1/2 -translate-x-1/2 pointer-events-none"
           >
             <a
