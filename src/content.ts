@@ -31,10 +31,12 @@ export const navbar = {
 // HERO
 // ─────────────────────────────────────────────────────────────────
 export const hero = {
-  // ── Hero background image ───────────────────────────────────────
-  // Swap this URL with your IONOS-hosted image when ready.
-  // e.g. "https://mindbodyritual.ca/media/hero-background.jpg"
-  // Leave as "" to show the placeholder gradient.
+  // ── Hero background video ───────────────────────────────────────
+  // Drop a new file into public/videos/ and update this path,
+  // or point to an absolute IONOS URL when ready.
+  videoSrc:       "/videos/hero-video-bg.mp4",
+
+  // ── Hero background image (used as poster / fallback) ──────────
   backgroundImage: "/images/hero-bg.png",
 
   badge:          "Free during Early Access",
@@ -186,7 +188,10 @@ export const resources = {
   headline:     "Tools for every family moment",
   subheadline:  "Practical guides and insights to support your family's mental health, mindfulness, and daily wellbeing.",
   cta:          "Explore all resources",
-  ctaHref:      "/resources/",
+  // ── ctaHref ──────────────────────────────────────────────────
+  // Points to #download (waitlist) until /resources/ pages are live.
+  // Change to "/resources/" when content is published.
+  ctaHref:      "#download",
   items: [
     {
       category:    "Family Wellness",
@@ -196,6 +201,7 @@ export const resources = {
       accentHex:   "#C9813A",
       readTime:    "4 min read",
       href:        "/resources/morning-routines/",
+      comingSoon:  true,
     },
     {
       category:    "Mindfulness",
@@ -205,6 +211,7 @@ export const resources = {
       accentHex:   "#3D6B4F",
       readTime:    "5 min read",
       href:        "/resources/breathwork-kids/",
+      comingSoon:  true,
     },
     {
       category:    "Mental Health",
@@ -214,6 +221,7 @@ export const resources = {
       accentHex:   "#7C3AED",
       readTime:    "6 min read",
       href:        "/resources/kids-emotions/",
+      comingSoon:  true,
     },
     {
       category:    "Family Wellness",
@@ -223,6 +231,7 @@ export const resources = {
       accentHex:   "#A8843A",
       readTime:    "5 min read",
       href:        "/resources/gratitude-science/",
+      comingSoon:  true,
     },
   ],
 }
@@ -441,11 +450,23 @@ export const download = {
   sectionLabel:      "Get the App",
   headline:          "Start your family ritual tomorrow morning.",
   subheadline:       "Download MindBodyRitual free. No subscription required to get started. Available on iOS and Android.",
-  waitlistText:      "Or join the early access list — we'll email you when your region goes live.",
-  waitlistButton:    "Join Early Access",
-  waitlistLoading:   "Joining...",
-  waitlistSuccess:   "You're on the list! We'll be in touch soon.",
-  emailPlaceholder:  "your@email.com",
+
+  // ── App store URLs ────────────────────────────────────────────
+  // Leave as "" until the app is live — buttons will fall back to the waitlist form.
+  appStoreUrl:    "",
+  googlePlayUrl:  "",
+
+  waitlistText:        "Or join the early access list — we'll email you when your region goes live.",
+  waitlistButton:      "Join Early Access",
+  waitlistLoading:     "Joining...",
+  waitlistSuccess:     "You're on the list! We'll be in touch soon.",
+  waitlistError:       "Something went wrong — please try again or email hello@mindbodyritual.ca",
+  waitlistConfigError: "Sign-up is temporarily unavailable. Please email hello@mindbodyritual.ca to join the list.",
+  emailPlaceholder:    "your@email.com",
+
+  // CASL / CAN-SPAM consent line — displayed below the submit button.
+  // Required for Canadian anti-spam compliance (CASL).
+  waitlistConsent:     "By joining, you agree to receive updates from MindBodyRitual. Unsubscribe anytime.",
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -507,11 +528,14 @@ export const footer = {
       { label: "Pricing",         href: "/pricing/" },
       { label: "Download the App",href: "#download" },
     ],
+    // ── Company links ───────────────────────────────────────────
+    // Set href to "" until pages exist — Footer renders these as
+    // plain text (non-navigating) rather than broken anchor tags.
     Company: [
-      { label: "About Panbuddha", href: "#" },
-      { label: "Blog",            href: "#" },
-      { label: "Careers",         href: "#" },
-      { label: "Press",           href: "#" },
+      { label: "About Panbuddha", href: "" },
+      { label: "Blog",            href: "" },
+      { label: "Careers",         href: "" },
+      { label: "Press",           href: "" },
     ],
     Support: [
       { label: "Help Centre",     href: "/support/" },

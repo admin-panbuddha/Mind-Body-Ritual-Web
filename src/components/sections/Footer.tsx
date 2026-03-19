@@ -30,13 +30,21 @@ export function Footer() {
               <ul className="space-y-2.5">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="font-body text-sm text-white/70 hover:text-white
-                                 transition-colors duration-150"
-                    >
-                      {link.label}
-                    </a>
+                    {link.href ? (
+                      <a
+                        href={link.href}
+                        className="font-body text-sm text-white/70 hover:text-white
+                                   transition-colors duration-150"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      // No URL yet — render as plain text so it's visible but not
+                      // a broken or deceptive anchor.
+                      <span className="font-body text-sm text-white/40 cursor-default select-none">
+                        {link.label}
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -50,16 +58,16 @@ export function Footer() {
             © {new Date().getFullYear()} Panbuddha Inc. All rights reserved.
           </p>
 
+          {/* Social links — rendered as plain text until real URLs are added to content.ts */}
           <div className="flex items-center gap-4">
             {footer.socialLinks.map((social) => (
-              <a
+              <span
                 key={social}
-                href="#"
-                className="font-body text-xs text-white/40 hover:text-white/80 transition-colors"
+                className="font-body text-xs text-white/40 cursor-default select-none"
                 aria-label={social}
               >
                 {social}
-              </a>
+              </span>
             ))}
           </div>
         </div>

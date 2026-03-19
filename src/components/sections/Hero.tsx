@@ -8,6 +8,9 @@
  * • Floating stat pills via CSS @keyframes (preserved from original)
  * • Full prefers-reduced-motion support — renders static when enabled
  * • CLS-safe: only opacity + transform animated, no layout properties
+ *
+ * All visible copy is sourced from src/content.ts (hero export).
+ * Video source and poster image are also driven from content.ts.
  */
 
 import { useRef, useEffect } from 'react'
@@ -66,11 +69,12 @@ export function Hero() {
     <section className="relative min-h-screen flex items-center overflow-hidden bg-cream pt-20 pb-16">
 
       {/* ── LAYER 0: Hero background video — loops silently, no controls ─ */}
-      {/* To swap: replace /videos/hero-video-bg.mp4 in the public/videos folder */}
+      {/* To swap: update hero.videoSrc in src/content.ts */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden>
         <video
           ref={videoRef}
-          src="/videos/hero-video-bg.mp4"
+          src={heroContent.videoSrc}
+          poster={heroContent.backgroundImage || undefined}
           autoPlay
           muted
           loop
@@ -102,32 +106,34 @@ export function Hero() {
           <Container className="max-w-xl" {...containerProps}>
 
             <Item className="mb-6" {...itemProps}>
-              <Badge><Icon name="ui_Icon_leaf" size={14} className="inline-block -mt-0.5" /> Free during Early Access</Badge>
+              <Badge>
+                <Icon name="ui_Icon_leaf" size={14} className="inline-block -mt-0.5" />
+                {heroContent.badge}
+              </Badge>
             </Item>
 
             <Item {...itemProps}>
               <h1 className="font-heading text-display-lg md:text-display-xl
                              text-forest leading-[1.08] tracking-tight mb-6">
-                25 minutes.<br />
-                Five rituals.<br />
-                <span className="text-amber">One family.</span>
+                {heroContent.headlineLine1}<br />
+                {heroContent.headlineLine2}<br />
+                <span className="text-amber">{heroContent.headlineLine3}</span>
               </h1>
             </Item>
 
             <Item {...itemProps}>
               <p className="font-body text-body-lg text-[var(--text-light)]
                             leading-relaxed mb-8 max-w-md">
-                A morning wellness routine designed for caregivers and kids ages 3+.
-                Breathe, move, connect — together, every day.
+                {heroContent.subheadline}
               </p>
             </Item>
 
             <Item className="flex flex-col sm:flex-row gap-3 mb-10" {...itemProps}>
               <Button href="#download" size="lg" variant="primary">
-                Get the App — Free
+                {heroContent.ctaPrimary}
               </Button>
               <Button href="#how-it-works" size="lg" variant="ghost">
-                See how it works ↓
+                {heroContent.ctaSecondary}
               </Button>
             </Item>
 
@@ -149,7 +155,7 @@ export function Hero() {
                   {'★★★★★'.split('').map((s, i) => <span key={i}>{s}</span>)}
                 </div>
                 <p className="font-body text-xs text-[var(--text-light)] mt-0.5">
-                  Loved by 2,400+ families
+                  {heroContent.socialProofText}
                 </p>
               </div>
             </Item>
@@ -161,7 +167,7 @@ export function Hero() {
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1
                       text-[var(--text-light)] animate-bounce-slow">
-        <span className="font-body text-xs tracking-widest uppercase">Scroll</span>
+        <span className="font-body text-xs tracking-widest uppercase">{heroContent.scrollLabel}</span>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" strokeWidth="1.5"
             strokeLinecap="round" strokeLinejoin="round" />
