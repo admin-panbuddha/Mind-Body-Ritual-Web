@@ -37,7 +37,7 @@ function ClockVisual({ totalMinutes, maxMinutes = 25 }: { totalMinutes: number; 
         right: '3%',
         width: 'clamp(90px, 15%, 130px)',
         aspectRatio: '1',
-        zIndex: 2,
+        zIndex: 3,
       }}
     >
       <svg
@@ -112,7 +112,7 @@ function ClockVisual({ totalMinutes, maxMinutes = 25 }: { totalMinutes: number; 
 
 // ─── IONOS video source ──────────────────────────────────────────
 // Note: the folder name on IONOS is literally "/-videos/" (dash is intentional).
-const RITUAL_VIDEO_SRC = 'https://mindbodyritual.ca/-videos/website-center-page.mp4'
+const RITUAL_VIDEO_SRC = 'https://mindbodyritual.ca/media/website-center-page.mp4'
 const CREAM = '#FAF9F2'
 // ────────────────────────────────────────────────────────────────
 
@@ -150,7 +150,7 @@ function RitualStep({
     >
       {/* Vertical connector line */}
       <div
-        className="absolute left-[22px] top-11 bottom-0 w-[2px] rounded-full"
+        className="absolute left-[32px] top-[70px] bottom-0 w-[2px] rounded-full"
         aria-hidden
         style={{
           backgroundColor: `${ritual.accentHex}${isActive ? '55' : '22'}`,
@@ -160,20 +160,22 @@ function RitualStep({
       />
 
       {/* Icon + title row — compact in collapsed state */}
-      <div className="flex items-center gap-2.5" style={{ gap: isActive && !reduce ? '12px' : '10px' }}>
+      <div className="flex items-center gap-3">
         <motion.div
           animate={reduce || !isActive
             ? { scale: 1, opacity: 1 }
-            : { scale: [1, 1.10, 1], opacity: [0.85, 1, 0.85] }}
+            : { scale: [1, 1.08, 1], opacity: [0.9, 1, 0.9] }}
           transition={{ duration: 2.6, repeat: isActive ? Infinity : 0, ease: 'easeInOut' }}
-          className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+          className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center"
           style={{
-            backgroundColor: `${ritual.accentHex}${isActive ? '22' : '10'}`,
-            border: `1.5px solid ${ritual.accentHex}${isActive ? '50' : '22'}`,
-            transition: 'background-color 0.22s ease, border-color 0.22s ease',
+            backgroundColor: isActive ? ritual.accentHex : `${ritual.accentHex}18`,
+            boxShadow: isActive ? `0 4px 16px ${ritual.accentHex}44` : 'none',
+            transition: 'background-color 0.28s ease, box-shadow 0.28s ease',
           }}
         >
-          <Icon name={ritual.icon} size={20} />
+          <span style={{ filter: isActive ? 'brightness(0) invert(1)' : 'none', transition: 'filter 0.28s ease', display: 'flex' }}>
+            <Icon name={ritual.icon} size={52} />
+          </span>
         </motion.div>
 
         <div className="flex-1 flex items-center justify-between gap-2.5 min-w-0" style={{ gap: isActive && !reduce ? '12px' : '8px' }}>
@@ -213,7 +215,7 @@ function RitualStep({
             animate={{ opacity: 1, height: 'auto', y: 0 }}
             exit={{ opacity: 0, height: 0, y: -3 }}
             transition={{ duration: 0.24, ease: 'easeOut' }}
-            className="overflow-hidden pl-[52px]"
+            className="overflow-hidden pl-[80px]"
           >
             <p className="font-body text-xs text-[var(--text-light)] leading-relaxed pt-0.5">
               {ritual.description}
@@ -397,19 +399,28 @@ export function RitualCards() {
           style={{ aspectRatio: '16 / 9' }}
         >
 
-          {/* ── LAYER 0: Background video ─────────────────── */}
-          <video
-            src={RITUAL_VIDEO_SRC}
-            autoPlay muted loop playsInline preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ zIndex: 0 }}
+          {/* ── LAYER 0: Fallback background (shown when video hasn't loaded) ── */}
+          <div
+            className="absolute inset-0"
+            style={{
+              zIndex: 0,
+              background: 'linear-gradient(135deg, #2a4d3a 0%, #3d6b4f 35%, #4e7d5e 55%, #6a9e78 75%, #8bbb90 100%)',
+            }}
           />
 
-          {/* ── LAYER 1: Left reading gradient ───────────────────────── */}
+          {/* ── LAYER 0: Background video (sits above fallback) ───────────── */}
+          <video
+            src={RITUAL_VIDEO_SRC}
+            autoPlay muted loop playsInline preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ zIndex: 1 }}
+          />
+
+          {/* ── LAYER 2: Left reading gradient ───────────────────────── */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              zIndex: 1,
+              zIndex: 2,
               background: `linear-gradient(to right,
                 ${CREAM} 0%,
                 ${CREAM}ee 18%,
@@ -420,16 +431,16 @@ export function RitualCards() {
             }}
           />
 
-          {/* ── LAYER 1: Top blend ─────────────────── */}
+          {/* ── LAYER 2: Top blend ─────────────────── */}
           <div
             className="absolute top-0 left-0 right-0 pointer-events-none"
-            style={{ zIndex: 1, height: '10%', background: `linear-gradient(to bottom, ${CREAM}, transparent)` }}
+            style={{ zIndex: 2, height: '10%', background: `linear-gradient(to bottom, ${CREAM}, transparent)` }}
           />
 
-          {/* ── LAYER 1: Bottom blend ──────────────── */}
+          {/* ── LAYER 2: Bottom blend ──────────────── */}
           <div
             className="absolute bottom-0 left-0 right-0 pointer-events-none"
-            style={{ zIndex: 1, height: '10%', background: `linear-gradient(to top, ${CREAM}, transparent)` }}
+            style={{ zIndex: 2, height: '10%', background: `linear-gradient(to top, ${CREAM}, transparent)` }}
           />
 
           {/* ── LAYER 2: Animated clock — bottom-right, synced to slider ── */}
@@ -442,7 +453,7 @@ export function RitualCards() {
           */}
           <div
             className="absolute inset-y-0 left-0 flex flex-col justify-between px-[4%] py-[7%]"
-            style={{ zIndex: 2, width: 'clamp(300px, 58%, 700px)' }}
+            style={{ zIndex: 3, width: 'clamp(300px, 58%, 700px)' }}
             onMouseLeave={() => setHoveredStep(0)}
           >
             {rituals.map((ritual, i) => (
@@ -459,11 +470,11 @@ export function RitualCards() {
           </div>
 
           {/*
-            ── LAYER 2: CTA — bottom-LEFT, larger, with bouncing down arrow ──
+            ── LAYER 4: CTA — bottom-center, positioned near bottom edge ──
           */}
           <div
-            style={{ zIndex: 3 }}
-            className="absolute bottom-[6%] left-1/2 -translate-x-1/2 pointer-events-none"
+            style={{ zIndex: 4 }}
+            className="absolute bottom-[2%] left-1/2 -translate-x-1/2 pointer-events-none"
           >
             <a
               href="#download"
@@ -471,25 +482,14 @@ export function RitualCards() {
                          font-body font-semibold text-white pointer-events-auto group"
               style={{ padding: '14px 26px' }}
             >
-              {/* Lotus / flow SVG icon — scales on button hover via CSS */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="20" height="20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="ritual-cta-icon text-white/80 shrink-0"
+              {/* Brand logo icon — inverted to white */}
+              <span
+                className="ritual-cta-icon shrink-0"
+                style={{ filter: 'brightness(0) invert(1)', display: 'flex', opacity: 0.9 }}
                 aria-hidden
               >
-                {/* Lotus / bloom: 3 petals suggesting opening/starting */}
-                <path d="M12 22 C12 22 5 17 5 11 C5 7.5 8 5 12 5 C16 5 19 7.5 19 11 C19 17 12 22 12 22Z" />
-                <path d="M12 5 C12 5 7 2 4 5 C2 7 3 10 5 11" />
-                <path d="M12 5 C12 5 17 2 20 5 C22 7 21 10 19 11" />
-                <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
-              </svg>
+                <Icon name="ui_Icon_MindBodyRitual" size={22} />
+              </span>
 
               <div className="flex flex-col items-start gap-0.5">
                 <span className="text-[15px] leading-tight tracking-wide">Start your ritual</span>

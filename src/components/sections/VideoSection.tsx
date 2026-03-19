@@ -21,7 +21,7 @@
  */
 
 // ─── IONOS-hosted video ──────────────────────────────────────────────────────
-const VIDEO_SRC = 'https://mindbodyritual.ca/-videos/website-center-page.mp4'
+const VIDEO_SRC = 'https://mindbodyritual.ca/media/website-center-page.mp4'
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function VideoSection() {
